@@ -1,0 +1,29 @@
+{
+  "compilerOptions": {
+    // base
+    "target": "es2022",
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
+    "strict": true,
+
+    // project specific
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "allowSyntheticDefaultImports": true,
+    "outDir": "dist",
+    "rootDir": "src",
+
+    // personal choice
+    "sourceMap": false,
+    "noEmitOnError": true,
+    "removeComments": true,
+
+    // Aliases
+    "baseUrl": ".",
+    "paths": { "@/*": ["src/*"] }
+  },
+  "include": ["src", "types"],
+  "exclude": ["node_modules", "dist"]
+}

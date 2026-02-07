@@ -1,0 +1,24 @@
+import { Router } from "express";
+import { protect } from "@/middlewares/auth.middleware";
+import { validate } from "@/middlewares/validate.middleware";
+import * as authController from "@/controllers/auth.controller";
+import {
+  loginSchema,
+  registerSchema,
+  updateProfileSchema,
+} from "@/schemas/auth.schema";
+
+const router = Router();
+
+router.post("/register", validate(registerSchema), authController.register);
+router.post("/login", validate(loginSchema), authController.login);
+router.get("/profile", protect, authController.getProfile);
+
+router.patch(
+  "/profile",
+  protect,
+  validate(updateProfileSchema),
+  authController.updateProfile,
+);
+
+export default router;
