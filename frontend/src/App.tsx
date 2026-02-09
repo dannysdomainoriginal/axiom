@@ -1,5 +1,6 @@
 import React from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
+import ReactHookForm from "./RHF";
 
 import PrivateRoute from "./components/routes/PrivateRoute";
 
@@ -28,10 +29,10 @@ const App = () => {
             path="/admin"
             element={<PrivateRoute allowedRoles={["admin"]} />}
           >
-            <Route path="/dashboard" element={<AdminDashboard />} />
-            <Route path="/tasks" element={<ManageTasksPage />} />
-            <Route path="/create-task" element={<CreateTaskPage />} />
-            <Route path="/users" element={<ManageUsersPage />} />
+            <Route path="dashboard" element={<AdminDashboard />} />
+            <Route path="tasks" element={<ManageTasksPage />} />
+            <Route path="create-task" element={<CreateTaskPage />} />
+            <Route path="users" element={<ManageUsersPage />} />
           </Route>
 
           {/* User Routes */}
@@ -39,9 +40,9 @@ const App = () => {
             path="/user"
             element={<PrivateRoute allowedRoles={["admin"]} />}
           >
-            <Route path="/dashboard" element={<UserDashboard />} />
-            <Route path="/tasks" element={<MyTasksPage />} />
-            <Route path="/tasks/:id" element={<TasksDetailsPage />} />
+            <Route path="dashboard" element={<UserDashboard />} />
+            <Route path="tasks" element={<MyTasksPage />} />
+            <Route path="tasks/:id" element={<TasksDetailsPage />} />
           </Route>
         </Routes>
       </BrowserRouter>

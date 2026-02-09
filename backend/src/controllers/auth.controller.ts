@@ -108,6 +108,8 @@ export const login: RequestHandler = async (req, res) => {
 /*                                 GET PROFILE                                */
 /* -------------------------------------------------------------------------- */
 export const getProfile: RequestHandler = async (req, res) => {
+  generateToken(req.user._id.toString(), res);
+
   return res.status(200).json({
     success: true,
     data: req.user,
