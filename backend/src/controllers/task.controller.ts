@@ -103,7 +103,7 @@ export const createTask: RequestHandler = async (req, res) => {
 
   res.status(201).json({
     success: true,
-    data: task,
+    data: await task.populate("assignedTo", "name email profileImageUrl"),
     message: "Task created successfully",
   });
 };
@@ -112,7 +112,10 @@ export const createTask: RequestHandler = async (req, res) => {
 /*                             UPDATE TASK DETAILS                            */
 /* -------------------------------------------------------------------------- */
 export const updateTask: RequestHandler = async (req, res) => {
-  const task = await Task.findById(req.params.taskId);
+  const task = await Task.findById(req.params.taskId).populate(
+    "assignedTo",
+    "name email profileImageUrl",
+  );
 
   if (!task) {
     throw httpError[404]("Task was not found");
@@ -132,7 +135,10 @@ export const updateTask: RequestHandler = async (req, res) => {
 /*                                 DELETE TASK                                */
 /* -------------------------------------------------------------------------- */
 export const deleteTask: RequestHandler = async (req, res) => {
-  const task = await Task.findById(req.params.taskId);
+  const task = await Task.findById(req.params.taskId).populate(
+    "assignedTo",
+    "name email profileImageUrl",
+  );
 
   if (!task) {
     throw httpError[404]("Task was not found");
@@ -143,7 +149,7 @@ export const deleteTask: RequestHandler = async (req, res) => {
   res.status(200).json({
     success: true,
     message: "Task deleted successfully",
-    data: task,
+    data: task.toObject({ versionKey: false }),
   });
 };
 
@@ -253,7 +259,7 @@ export const updateTaskStatus: RequestHandler = async (req, res) => {
 
   res.status(200).json({
     success: true,
-    data: task,
+    data: task.toObject({ versionKey: false }),
     message: "Task updated successfully",
   });
 };

@@ -7,8 +7,6 @@ import AuthLayout from "@/components/partials/AuthLayout";
 import Input from "@/components/ui/Input";
 import Button from "@/components/ui/Button";
 import toast from "react-hot-toast";
-import api from "@/libraries/axios";
-import { apiPaths } from "@/utils/apiPaths";
 
 const LoginPage = () => {
   const {
