@@ -20,32 +20,49 @@ type FileProps =
   | { buffer: Buffer; path?: never; key: string; type: string };
 
 // Upload a file (stream or tmp path)
-export const uploadFile = async ({ path, buffer, key, type }: FileProps) => {
-  try {
-    await r2.send(
-      new PutObjectCommand({
-        Bucket: process.env.R2_BUCKET,
-        Key: key,
-        Body: path ? fs.createReadStream(path) : buffer,
-        ContentType: type,
-      }),
-    );
+export const uploadFile =
+  process.env.NODE_ENV === "development"
+    ? async ({ path, buffer, key, type }: FileProps) => {
+        try {
+          await r2.send(
+            new PutObjectCommand({
+              Bucket: process.env.R2_BUCKET,
+              Key: key,
+              Body: path ? fs.createReadStream(path) : buffer,
+              ContentType: type,
+            }),
+          );
 
-    return {
-      key,
-      url: `${process.env.R2_PUBLIC_URL}/${key}`,
-    };
-  } catch (err: any) {
-    if (["ECONNRESET", "ETIMEDOUT", "ENOTFOUND"].includes(err.code)) {
-      return fallBackUploader({
-        key,
-        buffer: buffer || (await fs.promises.readFile(path)),
-      });
-    } else {
-      throw err;
-    }
-  }
-};
+          return {
+            key,
+            url: `${process.env.R2_PUBLIC_URL}/${key}`,
+          };
+        } catch (err: any) {
+          if (["ECONNRESET", "ETIMEDOUT", "ENOTFOUND"].includes(err.code)) {
+            return fallBackUploader({
+              key,
+              buffer: buffer || (await fs.promises.readFile(path)),
+            });
+          } else {
+            throw err;
+          }
+        }
+      }
+    : async ({ path, buffer, key, type }: FileProps) => {
+        await r2.send(
+          new PutObjectCommand({
+            Bucket: process.env.R2_BUCKET,
+            Key: key,
+            Body: path ? fs.createReadStream(path) : buffer,
+            ContentType: type,
+          }),
+        );
+
+        return {
+          key,
+          url: `${process.env.R2_PUBLIC_URL}/${key}`,
+        };
+      };
 
 // Delete a file by key
 export const deleteFile = async (key: string) => {
