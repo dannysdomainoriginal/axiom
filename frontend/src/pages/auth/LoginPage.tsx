@@ -2,11 +2,13 @@ import React from "react";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { loginSchema, type LoginSchema } from "@/schemas";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import AuthLayout from "@/components/partials/AuthLayout";
 import Input from "@/components/ui/Input";
 import Button from "@/components/ui/Button";
-import toast from "react-hot-toast";
+import { toast } from "@/libraries/sweetalert2";
+import { authService } from "@/services";
+import { useAuth } from "@/context/userContext";
 
 const LoginPage = () => {
   const {
@@ -21,13 +23,21 @@ const LoginPage = () => {
     resolver: zodResolver(loginSchema),
   });
 
-  const navigate = useNavigate();
+  const { updateUser } = useAuth()
 
   // Handle login
   const handleLogin: SubmitHandler<LoginSchema> = async (data) => {
-    await new Promise((resolve) => setTimeout(resolve, 1500));
-    toast.success("Successful");
-    console.log(data);
+    try {
+      const { data: user, message } = await authService.loginReq(
+        data.email,
+        data.password,
+      );
+
+      toast.success(message);
+      updateUser(user)
+    } catch (err: any) {
+      toast.error(err.message);
+    }
   };
 
   return (

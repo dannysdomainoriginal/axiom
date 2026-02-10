@@ -22,8 +22,10 @@ export const registerSchema = z.object({
 
   adminInviteToken: z
     .string()
-    .regex(/^\d{6}$/, "Invite token must be exactly 6 digits")
-    .optional(),
+    .optional()
+    .refine((v) => !v || /^\d{6}$/.test(v), {
+      message: "Invite token must be exactly 6 digits",
+    }),
 });
 
 export const updateProfileSchema = registerSchema

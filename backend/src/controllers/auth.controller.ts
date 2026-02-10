@@ -33,6 +33,8 @@ export const register: RequestHandler = async (req, res) => {
     throw httpError[400]("This email is already registered");
   }
 
+  console.log(req.files);
+
   const image = req.files?.["profile-img"];
   const roles = ["member"];
   adminInviteToken === process.env.ADMIN_INVITE_TOKEN && roles.push("admin");
@@ -54,7 +56,7 @@ export const register: RequestHandler = async (req, res) => {
       type: result.success ? "image/webp" : image.type,
     });
 
-    user.profileImageUrl = url;
+    if (url) user.profileImageUrl = url;
     await user.save();
   }
 
@@ -140,7 +142,7 @@ export const updateProfile: RequestHandler = async (req, res) => {
       type: result.success ? "image/webp" : image.type,
     });
 
-    user.profileImageUrl = url;
+    if (url) user.profileImageUrl = url;
   }
 
   await user.save();

@@ -12,7 +12,7 @@ interface LoggerOptions {
 }
 
 type LogFunction = (
-  level: "info" | "warn" | "error",
+  level: "info" | "warn" | "error" | "success",
   message: string,
   content?: unknown,
 ) => void;
@@ -26,9 +26,11 @@ export class Logger {
     this.levels = options.levels || ["info", "warn", "error"];
     this.dateFormat = options.dateFormat || "yyyy-MM-dd HH:mm:ss";
     this.colors = {
-      info: "\x1b[34m", // Blue
+      info: "\x1b[36m", // Cyan (was blue)
       warn: "\x1b[33m", // Yellow
       error: "\x1b[31m", // Red
+      debug: "\x1b[35m", // Magenta / Purple
+      success: "\x1b[32m", // Green
     };
   }
 
@@ -55,6 +57,10 @@ export class Logger {
 
   error(message: string, content?: unknown) {
     this.log("error", message, content);
+  }
+
+  success(message: string, content?: unknown) {
+    this.log("success", message, content);
   }
 }
 

@@ -6,8 +6,11 @@ import { Link, useNavigate } from "react-router-dom";
 import AuthLayout from "@/components/partials/AuthLayout";
 import Input from "@/components/ui/Input";
 import Button from "@/components/ui/Button";
-import toast from "react-hot-toast";
 import ProfilePhotoSelector from "@/components/ui/ProfilePhotoSelector";
+import { toast } from "@/libraries/sweetalert2";
+import { authService } from "@/services";
+import { buildFormDataStrict } from "@/utils/formParser";
+import { useAuth } from "@/context/userContext";
 
 const SignupPage = () => {
   const {
@@ -20,18 +23,27 @@ const SignupPage = () => {
       name: "",
       email: "",
       password: "",
-      profilePic: undefined,
+      "profile-img": undefined,
     },
     resolver: zodResolver(signupSchema),
   });
 
-  const navigate = useNavigate();
+  const { updateUser } = useAuth()
 
   // Handle signup
   const handleSignup: SubmitHandler<SignupSchema> = async (data) => {
-    await new Promise((resolve) => setTimeout(resolve, 1500));
-    toast.success("Successful");
     console.log(data)
+    const formData = buildFormDataStrict(data)
+    console.log(formData.get("profile-img"))
+    
+    try {
+      const { data: user, message } = await authService.signupReq(formData);
+
+      toast.success(message)
+      updateUser(user)
+    } catch (err: any) {
+      toast.error(err.message)
+    }
   };
 
   return (

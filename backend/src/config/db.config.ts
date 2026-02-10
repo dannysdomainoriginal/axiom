@@ -10,7 +10,7 @@ const connectDB = async () => {
 
   await mongoose
     .connect(uri)
-    .then((conn) => logger.info(`MongoDB connected: ${conn.connection.host}`))
+    .then((conn) => logger.success(`MongoDB connected: ${conn.connection.host}`))
     .catch((error) => {
       logger.error("Mongo connection error: Initiating clean exit");
       console.log(error);

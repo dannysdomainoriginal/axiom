@@ -3,3 +3,7 @@ interface ApiResponse<T> {
   message?: string;
   data: T;
 }
+
+interface ApiError {
+  message: string;
+}

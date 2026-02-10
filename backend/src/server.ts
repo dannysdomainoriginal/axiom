@@ -54,7 +54,7 @@ app.use((err: any, req: Request, res: Response, next: NextFunction) => {
 connectDB()
   .then(() => {
     app.listen(PORT, () => {
-      logger.info(`Server listening on port ${PORT}`);
+      logger.success(`Server listening on port ${PORT}`);
     });
   })
   .catch((err: any) => {

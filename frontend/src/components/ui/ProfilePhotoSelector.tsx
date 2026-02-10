@@ -14,7 +14,7 @@ const ProfilePhotoSelector = ({ control }: Props) => {
   const {
     field: { value, onChange },
   } = useController({
-    name: "profilePic",
+    name: "profile-img",
     control,
   });
 

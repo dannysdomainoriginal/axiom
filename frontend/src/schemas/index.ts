@@ -46,12 +46,12 @@ export const signupSchema = z.object({
 
   adminInviteToken: z
     .string()
-    .optional()
     .refine((v) => !v || /^\d{6}$/.test(v), {
       message: "Invite token must be exactly 6 digits",
-    }),
+    })
+    .optional(),
 
-  profilePic: z
+  "profile-img": z
     .instanceof(File)
     .superRefine((file, ctx) => {
       if (!file || file.size <= 0) {
