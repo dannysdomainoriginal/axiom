@@ -2,6 +2,7 @@ import React from "react";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import ReactHookForm from "./RHF";
 import { useAuth } from "./hooks/api/useAuth";
+import { cn } from "./utils";
 
 import ProtectedRoute from "./components/routes/ProtectedRoute";
 
@@ -19,29 +20,19 @@ import TasksDetailsPage from "./pages/user/TasksDetailsPage";
 import AuthRoute from "./components/routes/AuthRoute";
 
 const App = () => {
-  const { user } = useAuth();
-  console.log(user);
+  const { user, loading } = useAuth();
 
   return (
-    <div>
+    <div
+      className={cn(
+        "transition-opacity duration-500 ease-in",
+        !loading ? "opacity-100" : "opacity-0",
+      )}
+    >
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<AuthRoute />}>
-            <Route
-              path="/"
-              element={
-                <Navigate
-                  to={
-                    !user
-                      ? "/login"
-                      : user.roles.includes("admin")
-                        ? "/admin/dashboard"
-                        : "/user/dashboard"
-                  }
-                />
-              }
-            />
-
+            <Route path="/" element={<Navigate to="/login" />} />
             <Route path="login" element={<LoginPage />} />
             <Route path="signup" element={<SignupPage />} />
           </Route>

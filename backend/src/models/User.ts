@@ -12,11 +12,11 @@ export interface UserI extends Document {
 }
 
 interface UserMethods {
-  comparePassword: (password: string) => Promise<boolean>
+  comparePassword: (password: string) => Promise<boolean>;
 }
 
-interface UserModel extends Model<UserI, {}, UserMethods>{
-  findByEmail: (email: string) => Promise<UserI | null>
+interface UserModel extends Model<UserI, {}, UserMethods> {
+  findByEmail: (email: string) => Promise<UserI | null>;
 }
 
 const userSchema = new Schema<UserI, UserModel, UserMethods>(
@@ -41,7 +41,7 @@ const userSchema = new Schema<UserI, UserModel, UserMethods>(
 
     profileImageUrl: {
       type: String,
-      default: "/uploads/default.jpg",
+      default: "/images/default.jpg",
     },
 
     roles: {
@@ -68,6 +68,10 @@ const userSchema = new Schema<UserI, UserModel, UserMethods>(
 userSchema.pre("save", async function () {
   if (this.isModified("password")) {
     this.password = await bcrypt.hash(this.password, 10);
+  }
+
+  if (this.isModified("profileImageUrl")) {
+    this.profileImageUrl = this.profileImageUrl || "/images/default.jpg";
   }
 });
 

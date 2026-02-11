@@ -53,7 +53,7 @@ export type TaskDashboardStats = {
 
 // ------------------- TASK SERVICES -------------------
 
-export const getTasksReq = async (
+export const getTasks = async (
   status?: "Pending" | "In Progress" | "Completed",
 ): Promise<ApiResponse<{ tasks: Task[]; statusSummary: any }>> => {
   try {
@@ -66,7 +66,7 @@ export const getTasksReq = async (
   }
 };
 
-export const getTaskByIdReq = async (
+export const getTaskById = async (
   taskId: string,
 ): Promise<ApiResponse<Task>> => {
   try {
@@ -77,7 +77,7 @@ export const getTaskByIdReq = async (
   }
 };
 
-export const createTaskReq = async (
+export const createTask = async (
   taskData: Partial<Task>,
 ): Promise<ApiResponse<Task>> => {
   try {
@@ -88,7 +88,7 @@ export const createTaskReq = async (
   }
 };
 
-export const updateTaskReq = async (
+export const updateTask = async (
   taskId: string,
   taskData: Partial<Task>,
 ): Promise<ApiResponse<Task>> => {
@@ -100,7 +100,7 @@ export const updateTaskReq = async (
   }
 };
 
-export const deleteTaskReq = async (
+export const deleteTask = async (
   taskId: string,
 ): Promise<ApiResponse<undefined>> => {
   try {
@@ -111,7 +111,7 @@ export const deleteTaskReq = async (
   }
 };
 
-export const updateTaskStatusReq = async (
+export const updateTaskStatus = async (
   taskId: string,
   status: "Pending" | "In Progress" | "Completed",
   todoChecklist?: { text: string; completed: boolean }[],
@@ -129,7 +129,7 @@ export const updateTaskStatusReq = async (
 
 // ------------------- DASHBOARD -------------------
 
-export const getDashboardDataReq = async (): Promise<
+export const getDashboardData = async (): Promise<
   ApiResponse<TaskDashboardStats>
 > => {
   try {
@@ -140,7 +140,7 @@ export const getDashboardDataReq = async (): Promise<
   }
 };
 
-export const getUserDashboardDataReq = async (): Promise<
+export const getUserDashboardData = async (): Promise<
   ApiResponse<TaskDashboardStats>
 > => {
   try {

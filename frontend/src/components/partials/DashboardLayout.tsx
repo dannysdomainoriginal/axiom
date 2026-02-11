@@ -1,22 +1,23 @@
 import React from "react";
 import { useAuth } from "@/hooks/api/useAuth";
+import Navbar from "./Navbar";
+import SideMenu from "./SideMenu";
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
-  activeMenu: boolean;
 }
 
-const DashboardLayout = ({ children, activeMenu }: DashboardLayoutProps) => {
+const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   const { user } = useAuth();
 
   return (
     <div className="">
-      <Navbar activeMenu={activeMenu} />
+      <Navbar />
 
       {user && (
         <div className="flex">
           <div className="max-[1080px]:hidden">
-            <SideMenu activeMenu={activeMenu} />
+            <SideMenu />
           </div>
 
           <div className="grow mx-5">{children}</div>
