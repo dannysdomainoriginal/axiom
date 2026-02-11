@@ -8,7 +8,7 @@ import Input from "@/components/ui/Input";
 import Button from "@/components/ui/Button";
 import { toast } from "@/libraries/sweetalert2";
 import { authService } from "@/services";
-import { useAuth } from "@/context/userContext";
+import { useAuth } from "@/hooks/api/useAuth";
 
 const LoginPage = () => {
   const {
@@ -23,7 +23,7 @@ const LoginPage = () => {
     resolver: zodResolver(loginSchema),
   });
 
-  const { updateUser } = useAuth()
+  const { updateUser } = useAuth();
 
   // Handle login
   const handleLogin: SubmitHandler<LoginSchema> = async (data) => {
@@ -34,7 +34,7 @@ const LoginPage = () => {
       );
 
       toast.success(message);
-      updateUser(user)
+      updateUser(user);
     } catch (err: any) {
       toast.error(err.message);
     }

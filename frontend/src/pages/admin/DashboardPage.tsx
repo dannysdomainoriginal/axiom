@@ -1,9 +1,11 @@
-import React from 'react'
+import DashboardLayout from "@/components/partials/DashboardLayout";
+import { useAuth } from "@/hooks/api/useAuth";
+import React from "react";
 
 const DashboardPage = () => {
-  return (
-    <div>DashboardPage</div>
-  )
-}
+  const { user } = useAuth();
 
-export default DashboardPage
+  return <div>DashboardPage</div>;
+};
+
+export default DashboardPage;

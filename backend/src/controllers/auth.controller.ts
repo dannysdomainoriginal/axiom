@@ -33,8 +33,6 @@ export const register: RequestHandler = async (req, res) => {
     throw httpError[400]("This email is already registered");
   }
 
-  console.log(req.files);
-
   const image = req.files?.["profile-img"];
   const roles = ["member"];
   adminInviteToken === process.env.ADMIN_INVITE_TOKEN && roles.push("admin");

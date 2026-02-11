@@ -1,5 +1,4 @@
-import { useAuth } from "@/context/userContext";
-import React from "react";
+import { useAuth } from "@/hooks/api/useAuth";
 import { Navigate, Outlet } from "react-router-dom";
 
 type AuthRouteProps = {
@@ -9,6 +8,7 @@ type AuthRouteProps = {
 const AuthRoute = () => {
   const { loading, user } = useAuth();
 
+  // TODO return a better loadingState
   if (loading) {
     return null;
   }

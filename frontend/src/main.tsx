@@ -5,14 +5,13 @@ import App from "./App.tsx";
 import { Toaster } from "react-hot-toast";
 import { QueryClientProvider } from "@tanstack/react-query";
 import queryClient from "./libraries/tanstack.ts";
-import AuthProvider from "./context/userContext.tsx";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <QueryClientProvider client={queryClient}>
-      <AuthProvider>
+      {/* <AuthProvider> */}
         <App />
-      </AuthProvider>
+      {/* </AuthProvider> */}
       <Toaster position="top-center" />
     </QueryClientProvider>
   </StrictMode>,

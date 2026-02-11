@@ -10,7 +10,7 @@ import ProfilePhotoSelector from "@/components/ui/ProfilePhotoSelector";
 import { toast } from "@/libraries/sweetalert2";
 import { authService } from "@/services";
 import { buildFormDataStrict } from "@/utils/formParser";
-import { useAuth } from "@/context/userContext";
+import { useAuth } from "@/hooks/api/useAuth";
 
 const SignupPage = () => {
   const {
@@ -28,21 +28,21 @@ const SignupPage = () => {
     resolver: zodResolver(signupSchema),
   });
 
-  const { updateUser } = useAuth()
+  const { updateUser } = useAuth();
 
   // Handle signup
   const handleSignup: SubmitHandler<SignupSchema> = async (data) => {
-    console.log(data)
-    const formData = buildFormDataStrict(data)
-    console.log(formData.get("profile-img"))
-    
+    console.log(data);
+    const formData = buildFormDataStrict(data);
+    console.log(formData.get("profile-img"));
+
     try {
       const { data: user, message } = await authService.signupReq(formData);
 
-      toast.success(message)
-      updateUser(user)
+      toast.success(message);
+      updateUser(user);
     } catch (err: any) {
-      toast.error(err.message)
+      toast.error(err.message);
     }
   };
 

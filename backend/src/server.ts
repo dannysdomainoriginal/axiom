@@ -6,6 +6,7 @@ import routes from "./routes";
 import morgan from "morgan";
 import connectDB from "./config/db.config";
 import { logger } from "./libraries/logger";
+import { join } from "path";
 
 const app = express();
 const PORT = process.env.PORT || 8000;
@@ -22,6 +23,10 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use("/api", routes);
+
+if (process.env.NODE_ENV === "development") {
+  app.use("/uploads", express.static(join(process.cwd(), "uploads")));
+}
 
 // Not found handler
 app.use((req, res, next) => {

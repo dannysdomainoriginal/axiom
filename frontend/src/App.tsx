@@ -1,9 +1,9 @@
 import React from "react";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import ReactHookForm from "./RHF";
-import { useAuth } from "./context/userContext";
+import { useAuth } from "./hooks/api/useAuth";
 
-import PrivateRoute from "./components/routes/PrivateRoute";
+import ProtectedRoute from "./components/routes/ProtectedRoute";
 
 import LoginPage from "./pages/auth/LoginPage";
 import SignupPage from "./pages/auth/SignupPage";
@@ -41,7 +41,7 @@ const App = () => {
                 />
               }
             />
-            
+
             <Route path="login" element={<LoginPage />} />
             <Route path="signup" element={<SignupPage />} />
           </Route>
@@ -49,7 +49,7 @@ const App = () => {
           {/* Admin Routes */}
           <Route
             path="/admin"
-            element={<PrivateRoute allowedRoles={["admin"]} />}
+            element={<ProtectedRoute allowedRole={"admin"} />}
           >
             <Route path="dashboard" element={<AdminDashboard />} />
             <Route path="tasks" element={<ManageTasksPage />} />
@@ -61,7 +61,7 @@ const App = () => {
           {/* User Routes */}
           <Route
             path="/user"
-            element={<PrivateRoute allowedRoles={["member"]} />}
+            element={<ProtectedRoute allowedRole={"member"} />}
           >
             <Route path="dashboard" element={<UserDashboard />} />
             <Route path="tasks" element={<MyTasksPage />} />
