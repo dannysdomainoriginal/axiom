@@ -1,8 +1,11 @@
+import DashboardLayout from '@/components/partials/DashboardLayout'
 import React from 'react'
 
 const CreateTaskPage = () => {
   return (
-    <div>CreateTaskPage</div>
+    <DashboardLayout>
+      Create Task
+    </DashboardLayout>
   )
 }
 

@@ -1,16 +1,21 @@
 import DashboardLayout from "@/components/partials/DashboardLayout";
 import { useAuth } from "@/hooks/api/useAuth";
 import { taskService } from "@/services";
-import type { TaskDashboardStats } from "@/services/task.service";
-import React from "react";
+import type { Task, TaskDashboardStats } from "@/services/task.service";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import InfoCard from "@/components/ui/InfoCard";
 import { addThousandsSeparator } from "@/utils";
 import { LuArrowRight } from "react-icons/lu";
 import TaskListTable from "@/components/ui/TaskListTable";
-import moment from "moment"
+import moment from "moment";
 import { useQuery } from "@tanstack/react-query";
 import { useDebounce } from "@/hooks/utilities/useDebounce";
+import CustomPieChart from "@/components/ui/CustomPieChart";
+import CustomBarChart from "@/components/ui/CustomBarChart";
+
+type StatusDistribution = { status: Task["status"]; count: number }[];
+type PriorityDistribution = { priority: Task["priority"]; count: number }[];
 
 const DashboardPage = () => {
   const { user } = useAuth();
@@ -21,19 +26,54 @@ const DashboardPage = () => {
     isLoading,
     isError,
   } = useQuery<TaskDashboardStats>({
-    queryKey: ["auth", user?._id, "dashboard" ],
+    queryKey: ["auth", user?._id, "tasks", "dashboard"],
     queryFn: async () => {
       const { data } = await taskService.getDashboardData();
       return data;
     },
-    enabled: !!user
+    enabled: !!user,
   });
 
-  const loading = useDebounce(isLoading, 2000)
+  const loading = useDebounce(isLoading, 2000);
+
+  const pieChartData: StatusDistribution = dashboardData
+    ? [
+        {
+          status: "Pending",
+          count: dashboardData.charts.taskDistribution?.Pending || 0,
+        },
+        {
+          status: "In Progress",
+          count: dashboardData.charts.taskDistribution?.InProgress || 0,
+        },
+        {
+          status: "Completed",
+          count: dashboardData.charts.taskDistribution?.Completed || 0,
+        },
+      ]
+    : [];
+
+  const barChartData: PriorityDistribution = dashboardData
+    ? [
+        {
+          priority: "Low",
+          count: dashboardData.charts.taskPriorityLevels?.Low || 0,
+        },
+        {
+          priority: "Medium",
+          count: dashboardData.charts.taskPriorityLevels?.Medium || 0,
+        },
+        {
+          priority: "High",
+          count: dashboardData.charts.taskPriorityLevels?.High || 0,
+        },
+      ]
+    : [];
+
 
   return (
     <DashboardLayout>
-      <div className="card my-5">
+      <div className="card-wrapper my-5">
         {/* Greeting */}
         <div>
           <div className="col-span-3">
@@ -111,8 +151,30 @@ const DashboardPage = () => {
               />
             </div>
 
-            {/* Recent Tasks */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 my-4 md:my-6">
+              {/* Pie Chart */}
+              <div>
+                <div className="card">
+                  <div className="flex items-center justify-between">
+                    <h5 className="font-medium">Task Distribution</h5>
+                  </div>
+
+                  <CustomPieChart data={pieChartData} />
+                </div>
+              </div>
+
+              {/* Bar Chart */}
+              <div>
+                <div className="card">
+                  <div className="flex items-center justify-between">
+                    <h5 className="font-medium">Priority Distribution</h5>
+                  </div>
+
+                  <CustomBarChart data={barChartData} />
+                </div>
+              </div>
+
+              {/* Recent Tasks */}
               <div className="md:col-span-2">
                 <div className="card">
                   <div className="flex items-center justify-between">
