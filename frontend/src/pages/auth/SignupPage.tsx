@@ -32,7 +32,6 @@ const SignupPage = () => {
 
   // Handle signup
   const handleSignup: SubmitHandler<SignupSchema> = async (data) => {
-    console.log(data);
     const formData = buildFormDataStrict(data);
     console.log(formData.get("profile-img"));
 

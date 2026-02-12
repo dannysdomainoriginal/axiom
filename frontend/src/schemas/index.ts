@@ -82,5 +82,56 @@ export const signupSchema = z.object({
     .optional(),
 });
 
+export const taskSchema = z.object({
+  title: z
+    .string()
+    .min(1, { message: "Task title must contain at least one character" }),
+
+  description: z.string().min(5, {
+    message: "Task description must contain at least one character",
+  }),
+
+  priority: z.enum(["Low", "Medium", "High"], {
+    message: "Invalid task priority",
+  }),
+
+  status: z.enum(["Pending", "In Progress", "Completed"], {
+    message: "Invalid task status",
+  }),
+
+  dueDate: z.iso.datetime({
+    message: "Please enter an ISO date for the dueDate field",
+  }),
+
+  assignedTo: z
+    .array(z.string().min(1))
+    .min(1, "Please assign someone for this task"),
+
+  todoChecklist: z
+    .array(
+      z.object({
+        text: z
+          .string("Todo text must be a string")
+          .trim()
+          .min(1, "Todo text cannot be empty"),
+        completed: z.boolean(
+          "The completed property must be set to either true or false",
+        ),
+      }),
+    )
+    .optional(),
+
+  attachments: z
+    .array(z.string("Invalid input type for attachments.").trim().min(1))
+    .optional(),
+});
+
+export const updateTaskSchema = taskSchema.omit({
+  status: true,
+  todoChecklist: true,
+});
+
 export type LoginSchema = z.infer<typeof loginSchema>;
 export type SignupSchema = z.infer<typeof signupSchema>;
+export type TaskSchema = z.infer<typeof taskSchema>;
+export type UpdateTaskSchema = z.infer<typeof updateTaskSchema>;

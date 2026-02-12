@@ -13,6 +13,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useDebounce } from "@/hooks/utilities/useDebounce";
 import CustomPieChart from "@/components/ui/CustomPieChart";
 import CustomBarChart from "@/components/ui/CustomBarChart";
+import { useTasks } from "@/hooks/api/useTasks";
 
 type StatusDistribution = { status: Task["status"]; count: number }[];
 type PriorityDistribution = { priority: Task["priority"]; count: number }[];
@@ -25,14 +26,7 @@ const DashboardPage = () => {
     data: dashboardData,
     isLoading,
     isError,
-  } = useQuery<TaskDashboardStats>({
-    queryKey: ["auth", user?._id, "tasks", "dashboard"],
-    queryFn: async () => {
-      const { data } = await taskService.getDashboardData();
-      return data;
-    },
-    enabled: !!user,
-  });
+  } = useTasks("dashboard");
 
   const loading = useDebounce(isLoading, 2000);
 

@@ -1,4 +1,5 @@
 import api from "@/libraries/axios";
+import type { TaskSchema, UpdateTaskSchema } from "@/schemas";
 import { apiPaths } from "@/utils/apiPaths";
 
 export type Task = {
@@ -22,7 +23,7 @@ export type Task = {
     completed: boolean;
   }[];
   completedTodoCount?: number; // optional, backend calculates this
-  createdAt: Date
+  createdAt: Date;
 };
 
 export type TaskDashboardStats = {
@@ -51,11 +52,18 @@ export type TaskDashboardStats = {
   >[];
 };
 
+export type StatusSummary = {
+  all: number;
+  pendingTasks: number;
+  inProgressTasks: number;
+  completedTasks: number;
+};
+
 // ------------------- TASK SERVICES -------------------
 
 export const getTasks = async (
   status?: "Pending" | "In Progress" | "Completed",
-): Promise<ApiResponse<{ tasks: Task[]; statusSummary: any }>> => {
+): Promise<ApiResponse<{ tasks: Task[]; statusSummary: StatusSummary }>> => {
   try {
     const res = await api.get(apiPaths.tasks.getAllTasks, {
       params: status ? { status } : {},
@@ -78,7 +86,7 @@ export const getTaskById = async (
 };
 
 export const createTask = async (
-  taskData: Partial<Task>,
+  taskData: TaskSchema,
 ): Promise<ApiResponse<Task>> => {
   try {
     const res = await api.post(apiPaths.tasks.createTask, taskData);
@@ -88,12 +96,14 @@ export const createTask = async (
   }
 };
 
-export const updateTask = async (
-  taskId: string,
-  taskData: Partial<Task>,
-): Promise<ApiResponse<Task>> => {
+type UpdateTask = { taskId: string; data: UpdateTaskSchema };
+
+export const updateTask = async ({
+  taskId,
+  data,
+}: UpdateTask): Promise<ApiResponse<Task>> => {
   try {
-    const res = await api.patch(apiPaths.tasks.updateTask(taskId), taskData);
+    const res = await api.patch(apiPaths.tasks.updateTask(taskId), data);
     return res.data;
   } catch (error: any) {
     throw error.response?.data || { message: "Error updating task" };
@@ -111,16 +121,18 @@ export const deleteTask = async (
   }
 };
 
-export const updateTaskStatus = async (
-  taskId: string,
-  status: "Pending" | "In Progress" | "Completed",
-  todoChecklist?: { text: string; completed: boolean }[],
-): Promise<ApiResponse<Task>> => {
+export type StatusOrChecklist =
+  | { status: Task["status"]; todoChecklist: never }
+  | { status: never; todoChecklist: Task["todoChecklist"] };
+
+type UpdateTaskStatus = { taskId: string; data: StatusOrChecklist };
+
+export const updateTaskStatus = async ({
+  taskId,
+  data,
+}: UpdateTaskStatus): Promise<ApiResponse<Task>> => {
   try {
-    const res = await api.patch(apiPaths.tasks.updateTaskStatus(taskId), {
-      status,
-      todoChecklist,
-    });
+    const res = await api.patch(apiPaths.tasks.updateTaskStatus(taskId), data);
     return res.data;
   } catch (error: any) {
     throw error.response?.data || { message: "Error updating task status" };
