@@ -1,7 +1,7 @@
 import api from "@/libraries/axios";
 import { apiPaths } from "@/utils/apiPaths";
 
-interface User {
+export interface User {
   _id: string;
   name: string;
   email: string;

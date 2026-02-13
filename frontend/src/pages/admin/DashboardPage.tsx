@@ -1,15 +1,12 @@
 import DashboardLayout from "@/components/partials/DashboardLayout";
 import { useAuth } from "@/hooks/api/useAuth";
-import { taskService } from "@/services";
-import type { Task, TaskDashboardStats } from "@/services/task.service";
-import React, { useState } from "react";
+import type { Task } from "@/services/task.service";
 import { useNavigate } from "react-router-dom";
 import InfoCard from "@/components/ui/InfoCard";
 import { addThousandsSeparator } from "@/utils";
 import { LuArrowRight } from "react-icons/lu";
 import TaskListTable from "@/components/ui/TaskListTable";
 import moment from "moment";
-import { useQuery } from "@tanstack/react-query";
 import { useDebounce } from "@/hooks/utilities/useDebounce";
 import CustomPieChart from "@/components/ui/CustomPieChart";
 import CustomBarChart from "@/components/ui/CustomBarChart";
@@ -105,9 +102,9 @@ const DashboardPage = () => {
             </div>
           </>
         ) : isError ? (
-          <div className="mt-6 text-red-500 text-sm">
+          <p className="mt-6 text-red-500 text-sm">
             Failed to load dashboard data.
-          </div>
+          </p>
         ) : (
           <>
             {/* Stats Cards */}

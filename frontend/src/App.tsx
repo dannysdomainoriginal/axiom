@@ -18,6 +18,7 @@ import UserDashboard from "./pages/user/UserDashboardPage";
 import MyTasksPage from "./pages/user/MyTasksPage";
 import TasksDetailsPage from "./pages/user/TasksDetailsPage";
 import AuthRoute from "./components/routes/AuthRoute";
+import UpdateTaskPage from "./pages/admin/UpdateTaskPage";
 
 const App = () => {
   const { user, loading } = useAuth();
@@ -45,6 +46,7 @@ const App = () => {
             <Route path="dashboard" element={<AdminDashboard />} />
             <Route path="tasks" element={<ManageTasksPage />} />
             <Route path="create-task" element={<CreateTaskPage />} />
+            <Route path="update-task/:id" element={<UpdateTaskPage />} />
             <Route path="users" element={<ManageUsersPage />} />
             <Route path="users/:id" element={<ManageUsersPage />} />
           </Route>

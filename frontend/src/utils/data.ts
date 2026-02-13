@@ -75,14 +75,14 @@ export const userMenuData: Tab[] = [
 ];
 
 interface Priority {
-  label: "Low" | "Medium" | "Hard";
-  value: "Low" | "Medium" | "Hard";
+  label: "Low" | "Medium" | "High";
+  value: "Low" | "Medium" | "High";
 }
 
 export const priorityData: Priority[] = [
   { label: "Low", value: "Low" },
   { label: "Medium", value: "Medium" },
-  { label: "Hard", value: "Hard" },
+  { label: "High", value: "High" },
 ];
 
 interface Status {

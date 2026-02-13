@@ -85,10 +85,10 @@ export const signupSchema = z.object({
 export const taskSchema = z.object({
   title: z
     .string()
-    .min(1, { message: "Task title must contain at least one character" }),
+    .min(1, { message: "Please provide a task title" }),
 
   description: z.string().min(5, {
-    message: "Task description must contain at least one character",
+    message: "Please provide a task description",
   }),
 
   priority: z.enum(["Low", "Medium", "High"], {
@@ -126,12 +126,6 @@ export const taskSchema = z.object({
     .optional(),
 });
 
-export const updateTaskSchema = taskSchema.omit({
-  status: true,
-  todoChecklist: true,
-});
-
 export type LoginSchema = z.infer<typeof loginSchema>;
 export type SignupSchema = z.infer<typeof signupSchema>;
 export type TaskSchema = z.infer<typeof taskSchema>;
-export type UpdateTaskSchema = z.infer<typeof updateTaskSchema>;

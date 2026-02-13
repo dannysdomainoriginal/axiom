@@ -22,9 +22,11 @@ export const getTasks: RequestHandler = async (req, res) => {
 
   const baseTasks = isAdmin
     ? await Task.find(filter)
+        .sort({ createdAt: -1 })
         .populate("assignedTo", "name email profileImageUrl")
         .lean({ versionKey: false })
     : await Task.find({ ...filter, assignedTo: req.user._id })
+        .sort({ createdAt: -1 })
         .populate("assignedTo", "name email profileImageUrl")
         .lean({ versionKey: false });
 
@@ -122,7 +124,21 @@ export const updateTask: RequestHandler = async (req, res) => {
   }
 
   Object.assign(task, req.body);
+
+  // Recompute progress & status
+  if (req.body.todoChecklist) {
+    const total = task.todoChecklist.length;
+    const completed = task.todoChecklist.filter((i) => i.completed).length;
+
+    task.progress = total === 0 ? 0 : Math.round((completed / total) * 100);
+
+    if (task.progress === 100) task.status = "Completed";
+    else if (task.progress > 0) task.status = "In Progress";
+    else task.status = "Pending";
+  }
+
   await task.save();
+  await task.populate("assignedTo", "name email profileImageUrl");
 
   res.status(200).json({
     success: true,

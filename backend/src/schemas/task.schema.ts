@@ -66,7 +66,6 @@ export const updateTaskSchema = createTaskSchema
   .omit({
     status: true,
     progress: true,
-    todoChecklist: true,
   })
   .partial()
   .refine((data) => Object.keys(data).length > 0, {

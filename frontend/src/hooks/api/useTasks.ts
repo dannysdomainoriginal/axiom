@@ -14,7 +14,7 @@ import type {
 } from "@/services/task.service";
 import queryClient from "@/libraries/tanstack";
 import { toast } from "@/libraries/sweetalert2";
-import type { TaskSchema, UpdateTaskSchema } from "@/schemas";
+import type { TaskSchema } from "@/schemas";
 
 type TaskOption =
   | "get-tasks"
@@ -22,7 +22,8 @@ type TaskOption =
   | "user-dashboard"
   | "add-task"
   | "update-task"
-  | "update-task-status";
+  | "update-task-status"
+  | "delete-task";
 
 /* -------------------------------------------------------------------------- */
 /*                            USETASKS HOOK TYPING                            */
@@ -30,6 +31,7 @@ type TaskOption =
 
 export function useTasks(
   option: "get-tasks",
+  query?: Task["status"],
 ): UseQueryResult<{ tasks: Task[]; statusSummary: StatusSummary }>;
 
 export function useTasks(
@@ -45,8 +47,8 @@ export function useTasks(
 ): UseMutationResult<
   ApiResponse<Task>,
   ApiError,
-  { taskId: string; data: UpdateTaskSchema }
-  >;
+  { taskId: string; data: TaskSchema }
+>;
 
 export function useTasks(
   option: "update-task-status",
@@ -54,7 +56,11 @@ export function useTasks(
   ApiResponse<Task>,
   ApiError,
   { taskId: string; data: StatusOrChecklist }
->;
+  >;
+
+export function useTasks(
+  option: "delete-task",
+): UseMutationResult<ApiResponse<Task>, ApiError, string>;
 
 /* -------------------------------------------------------------------------- */
 /*                                USETASKS HOOK                               */
@@ -102,29 +108,70 @@ export function useTasks(option: TaskOption) {
 
   if (option === "add-task") {
     mutationFn = taskService.createTask;
-    onSuccess = ({ data, message }: ApiResponse<taskService.Task>) => {
-      queryClient.setQueryData<Task[]>(
+    onSuccess = async ({ data, message }: ApiResponse<taskService.Task>) => {
+      queryClient.setQueryData<{ tasks: Task[]; statusSummary: StatusSummary }>(
         ["auth", user?._id, "tasks"],
-        (old = []) => [...old, data],
+        (old) =>
+          old
+            ? {
+                ...old,
+                tasks: [...old.tasks, data],
+              }
+            : old,
       );
+
       toast.success(message!);
     };
   } else if (option === "update-task") {
     mutationFn = taskService.updateTask;
     onSuccess = ({ data, message }: ApiResponse<taskService.Task>) => {
-      queryClient.setQueryData<Task[]>(
+      queryClient.setQueryData<{ tasks: Task[]; statusSummary: StatusSummary }>(
         ["auth", user?._id, "tasks"],
-        (old = []) => old.map((task) => (task._id === data._id ? data : task)),
+        (old) =>
+          old
+            ? {
+                ...old,
+                tasks: old.tasks.map((task) =>
+                  task._id === data._id ? data : task,
+                ),
+              }
+            : old,
       );
+
       toast.success(message!);
     };
   } else if (option === "update-task-status") {
     mutationFn = taskService.updateTaskStatus;
     onSuccess = ({ data, message }: ApiResponse<taskService.Task>) => {
-      queryClient.setQueryData<Task[]>(
+      queryClient.setQueryData<{ tasks: Task[]; statusSummary: StatusSummary }>(
         ["auth", user?._id, "tasks"],
-        (old = []) => old.map((task) => (task._id === data._id ? data : task)),
+        (old) =>
+          old
+            ? {
+                ...old,
+                tasks: old.tasks.map((task) =>
+                  task._id === data._id ? data : task,
+                ),
+              }
+            : old,
       );
+
+      toast.success(message!);
+    };
+  } else if (option === "delete-task") {
+    mutationFn = taskService.deleteTask;
+    onSuccess = ({ data, message }: ApiResponse<taskService.Task>) => {
+      queryClient.setQueryData<{ tasks: Task[]; statusSummary: StatusSummary }>(
+        ["auth", user?._id, "tasks"],
+        (old) =>
+          old
+            ? {
+                ...old,
+                tasks: old.tasks.filter((t) => t._id !== data._id),
+              }
+            : old,
+      );
+
       toast.success(message!);
     };
   }

@@ -1,5 +1,5 @@
 import api from "@/libraries/axios";
-import type { TaskSchema, UpdateTaskSchema } from "@/schemas";
+import type { TaskSchema } from "@/schemas";
 import { apiPaths } from "@/utils/apiPaths";
 
 export type Task = {
@@ -96,7 +96,7 @@ export const createTask = async (
   }
 };
 
-type UpdateTask = { taskId: string; data: UpdateTaskSchema };
+type UpdateTask = { taskId: string; data: TaskSchema };
 
 export const updateTask = async ({
   taskId,
@@ -104,6 +104,7 @@ export const updateTask = async ({
 }: UpdateTask): Promise<ApiResponse<Task>> => {
   try {
     const res = await api.patch(apiPaths.tasks.updateTask(taskId), data);
+    console.log(res.data)
     return res.data;
   } catch (error: any) {
     throw error.response?.data || { message: "Error updating task" };
@@ -112,7 +113,7 @@ export const updateTask = async ({
 
 export const deleteTask = async (
   taskId: string,
-): Promise<ApiResponse<undefined>> => {
+): Promise<ApiResponse<Task>> => {
   try {
     const res = await api.delete(apiPaths.tasks.deleteTask(taskId));
     return res.data;
