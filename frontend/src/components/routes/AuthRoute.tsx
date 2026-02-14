@@ -8,7 +8,6 @@ type AuthRouteProps = {
 const AuthRoute = () => {
   const { loading, user } = useAuth();
 
-  // TODO return a better loadingState
   if (loading) {
     return null;
   }

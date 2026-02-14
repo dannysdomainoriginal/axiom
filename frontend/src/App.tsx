@@ -58,7 +58,10 @@ const App = () => {
           >
             <Route path="dashboard" element={<UserDashboard />} />
             <Route path="tasks" element={<MyTasksPage />} />
-            <Route path="tasks/:id" element={<TasksDetailsPage />} />
+          </Route>
+          
+          <Route path="/tasks" element={<ProtectedRoute allowedRole={"member"} />}>
+            <Route path=":id" element={<TasksDetailsPage />} />
           </Route>
         </Routes>
       </BrowserRouter>
