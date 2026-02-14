@@ -35,6 +35,7 @@ export const useAuth = (): AuthContext => {
 
   const clearUser = () => {
     queryClient.setQueryData<User | null>(["auth"], null);
+    queryClient.removeQueries({ queryKey: ["auth"] })
   };
 
   return {

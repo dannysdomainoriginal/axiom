@@ -12,6 +12,7 @@ const router = Router();
 
 router.post("/register", validate(registerSchema), authController.register);
 router.post("/login", validate(loginSchema), authController.login);
+router.post("/logout", protect, authController.logout);
 router.get("/profile", protect, authController.getProfile);
 
 router.patch(

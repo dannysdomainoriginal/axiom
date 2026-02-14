@@ -6,6 +6,7 @@ export const apiPaths = {
   auth: {
     register: "/auth/register",
     login: "/auth/login",
+    logout: "/auth/logout",
     getProfile: "/auth/profile",
     updateProfile: "/auth/profile",
   },

@@ -1,8 +1,9 @@
+import DashboardLayout from '@/components/partials/DashboardLayout'
 import React from 'react'
 
 const ManageUsersPage = () => {
   return (
-    <div>ManageUsersPage</div>
+    <DashboardLayout>ManageUsersPage</DashboardLayout>
   )
 }
 

@@ -3,6 +3,8 @@ import { adminMenuData, userMenuData } from "@/utils/data";
 import React, { useMemo } from "react";
 import { NavLink } from "react-router-dom";
 import { LuLogOut } from "react-icons/lu";
+import { authService } from "@/services";
+import { toast } from "@/libraries/sweetalert2";
 
 const SideMenu = () => {
   const { user, clearUser } = useAuth();
@@ -13,6 +15,16 @@ const SideMenu = () => {
     }
     return [];
   }, [user]);
+
+  const handleLogout = async () => {
+    try {
+      const { message } = await authService.logoutReq()
+      toast.success(message!)
+      clearUser()
+    } catch (err: any) {
+      toast.error(err.message)
+    }
+  }
 
   return (
     <div className="w-64 h-[calc(100vh-61px)] bg-white border-r border-gray-200/50 sticky top-15.25 z-20 flex flex-col">
@@ -65,7 +77,7 @@ const SideMenu = () => {
       {/* Logout Button (Bottom) */}
       <div className="p-4 border-t border-gray-100">
         <button
-          onClick={clearUser}
+          onClick={handleLogout}
           className="w-full flex items-center gap-4 text-[15px] py-3 px-6 rounded-lg text-red-600 transition-all duration-200 cursor-pointer hover:bg-red-50 hover:text-red-700 hover:shadow-sm active:scale-[0.98]"
         >
           <LuLogOut className="text-sm" />

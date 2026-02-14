@@ -105,6 +105,24 @@ export const login: RequestHandler = async (req, res) => {
 };
 
 /* -------------------------------------------------------------------------- */
+/*                                 LOGOUT USER                                */
+/* -------------------------------------------------------------------------- */
+export const logout: RequestHandler = async (req, res) => {
+  res.clearCookie("jwt", {
+    path: "/",
+    maxAge: 7 * 24 * 3600 * 1000,
+    httpOnly: true, // XSS
+    sameSite: "strict",
+    secure: process.env.NODE_ENV !== "development",
+  });
+
+  res.status(200).json({
+    success: true,
+    message: `Goodbye, ${req.user.name}!`,
+  });
+};
+
+/* -------------------------------------------------------------------------- */
 /*                                 GET PROFILE                                */
 /* -------------------------------------------------------------------------- */
 export const getProfile: RequestHandler = async (req, res) => {

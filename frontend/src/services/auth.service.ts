@@ -11,7 +11,7 @@ export interface AuthResponse {
     roles: ("member" | "admin" | "creator")[];
     profileImageUrl: string;
   };
-};
+}
 
 export const loginReq = async (
   email: string,
@@ -51,5 +51,14 @@ export const updateProfile = async (
     return res.data;
   } catch (error: any) {
     throw error.response?.data || { error: "Error updating your profile" };
+  }
+};
+
+export const logoutReq = async (): Promise<ApiResponse<undefined>> => {
+  try {
+    const res = await api.post(apiPaths.auth.logout);
+    return res.data;
+  } catch (error: any) {
+    throw error.response?.data || { error: "Error logging you out" };
   }
 };
