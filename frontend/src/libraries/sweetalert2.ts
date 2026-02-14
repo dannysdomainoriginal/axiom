@@ -13,7 +13,11 @@ export const Toast = Swal.mixin({
 });
 
 export const toast = {
+  disabled: Swal.isVisible,
+
   error(text: string) {
+    if (this.disabled()) return;
+
     return Toast.fire({
       icon: "error",
       text,
@@ -21,6 +25,8 @@ export const toast = {
   },
 
   success(text: string) {
+    if (this.disabled()) return;
+
     return Toast.fire({
       icon: "success",
       text,
@@ -28,6 +34,8 @@ export const toast = {
   },
 
   warn(text: string) {
+    if (this.disabled()) return;
+
     return Toast.fire({
       icon: "warning",
       text,
@@ -35,11 +43,16 @@ export const toast = {
   },
 
   info(text: string) {
+    if (this.disabled()) return;
+
     return Toast.fire({
       icon: "info",
       text,
     });
   },
 
-  fire: (options: SweetAlertOptions) => Toast.fire(options),
+  fire(options: SweetAlertOptions) {
+    if (this.disabled()) return;
+    return Toast.fire(options);
+  },
 };

@@ -14,7 +14,6 @@ const ManageTasksPage = () => {
   );
 
   const { data, isLoading, isError } = useTasks("get-tasks");
-  const navigate = useNavigate();
 
   const [allTasks, tabs] = useMemo(() => {
     if (!data) return [[], []];
@@ -81,21 +80,17 @@ const ManageTasksPage = () => {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mt-4">
           {isLoading ? (
-            Array.from({ length: 3 }).map((_, idx) => (
-              <TaskCardSkeleton key={idx} />
-            ))
+            [1, 2, 3].map((_, idx) => <TaskCardSkeleton key={idx} />)
           ) : isError ? (
             <p className="mt-6 text-red-500 text-sm col-span-full">
               Failed to load your tasks.
             </p>
           ) : (
-            <>
-              {allTasks.map((task, idx) => (
-                <Link key={idx} to={`/admin/update-task/${task._id}`}>
-                  <TaskCard task={task} />
-                </Link>
-              ))}
-            </>
+            allTasks.map((task, idx) => (
+              <Link key={idx} to={`/admin/update-task/${task._id}`}>
+                <TaskCard task={task} />
+              </Link>
+            ))
           )}
         </div>
       </div>

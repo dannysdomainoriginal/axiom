@@ -13,9 +13,9 @@ type Props = {
 };
 
 const SelectUsers = ({ control }: Props) => {
-  const [allUsers, setAllUsers] = useState<User[]>([]);
-  const [tempSelectedUsers, setTempSelectedUsers] = useState<User["_id"][]>([]);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [allUsers, setAllUsers] = useState<
+    Pick<User, "_id" | "name" | "email" | "profileImageUrl">[]
+  >([]);
 
   const {
     field: { value: selectedUsers, onChange: setSelectedUsers },
@@ -23,10 +23,13 @@ const SelectUsers = ({ control }: Props) => {
     name: "assignedTo",
     control,
   });
+  
+  const [tempSelectedUsers, setTempSelectedUsers] = useState<User["_id"][]>([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const getAllUsers = async () => {
     try {
-      const { data } = await userService.fetchUsersReq();
+      const { data } = await userService.fetchUsersProfileImages();
       setAllUsers(data);
     } catch (err: any) {
       toast.error(err.message);
@@ -55,8 +58,8 @@ const SelectUsers = ({ control }: Props) => {
   }, []);
 
   useEffect(() => {
-    if (selectedUsers.length === 0) {
-      setTempSelectedUsers([]);
+    if (tempSelectedUsers.length === 0) {
+      setTempSelectedUsers(selectedUsers); // sync them on load
     }
   }, [selectedUsers]);
 

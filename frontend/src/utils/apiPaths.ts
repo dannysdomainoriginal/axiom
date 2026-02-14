@@ -13,6 +13,7 @@ export const apiPaths = {
 
   users: {
     getAllUsers: "/users",
+    getUsersProfileImages: "/users",
     getUserById: (userId: string) => `/users/${userId}`,
     createUser: "/users",
     updateUser: (userId: string) => `/users/${userId}`,

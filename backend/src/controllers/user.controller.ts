@@ -43,6 +43,20 @@ export const getUsers: RequestHandler = async (req, res) => {
 };
 
 /* -------------------------------------------------------------------------- */
+/*                          GET USERS PROFILE IMAGES                          */
+/* -------------------------------------------------------------------------- */
+export const getUsersProfileImages: RequestHandler = async (req, res) => {
+  const users = await User.find({ roles: { $nin: ["admin"] } })
+    .select("name email profileImageUrl")
+    .lean({ versionKey: false });
+
+  res.status(200).json({
+    success: true,
+    data: users,
+  });
+};
+
+/* -------------------------------------------------------------------------- */
 /*                               GET USER BY ID                               */
 /* -------------------------------------------------------------------------- */
 export const getUserById: RequestHandler = async (req, res) => {
@@ -67,16 +81,16 @@ export const deleteUser: RequestHandler = async (req, res) => {
   }
 
   const key = user.profileImageUrl.split(`${process.env.R2_PUBLIC_URL}/`)[1];
-  
-  const success = await deleteFile(key)
+
+  const success = await deleteFile(key);
   if (!success) {
-    throw httpError[500]("Internet connection required to delete this user")
+    throw httpError[500]("Internet connection required to delete this user");
   }
 
-  await user.deleteOne()
+  await user.deleteOne();
 
   res.status(200).json({
     success: true,
-    message: `User: ${user.name} was successfully deleted`
-  })
+    message: `User: ${user.name} was successfully deleted`,
+  });
 };

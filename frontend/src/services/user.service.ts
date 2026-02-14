@@ -9,12 +9,31 @@ export interface User {
   profileImageUrl: string;
 }
 
-export const fetchUsersReq = async (): Promise<ApiResponse<User[]>> => {
+export interface UserWithTaskCounts extends User {
+  pendingTasks: number;
+  inProgressTasks: number;
+  completedTasks: number;
+}
+
+export const fetchUsersReq = async (): Promise<
+  ApiResponse<UserWithTaskCounts[]>
+> => {
   try {
     const res = await api.get(apiPaths.users.getAllUsers);
     return res.data;
   } catch (error: any) {
     throw error.response?.data || { message: "Error fetching users" };
+  }
+};
+
+export const fetchUsersProfileImages = async (): Promise<
+  ApiResponse<Pick<User, "_id" | "name" | "email" | "profileImageUrl">[]>
+> => {
+  try {
+    const res = await api.get(apiPaths.users.getUsersProfileImages);
+    return res.data;
+  } catch (error: any) {
+    throw error.response?.data || { message: "Error fetching users' images" };
   }
 };
 

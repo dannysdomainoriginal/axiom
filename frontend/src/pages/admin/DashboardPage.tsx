@@ -19,13 +19,7 @@ const DashboardPage = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
 
-  const {
-    data: dashboardData,
-    isLoading,
-    isError,
-  } = useTasks("dashboard");
-
-  const loading = useDebounce(isLoading, 2000);
+  const { data: dashboardData, isLoading, isError } = useTasks("dashboard");
 
   const pieChartData: StatusDistribution = dashboardData
     ? [
@@ -61,7 +55,6 @@ const DashboardPage = () => {
       ]
     : [];
 
-
   return (
     <DashboardLayout>
       <div className="card-wrapper my-5">
@@ -78,29 +71,8 @@ const DashboardPage = () => {
         </div>
 
         {/* Loading Skeleton */}
-        {loading ? (
-          <>
-            <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-3 md:gap-6 mt-5">
-              {[...Array(4)].map((_, i) => (
-                <div
-                  key={i}
-                  className="h-24 rounded-xl bg-gray-200 animate-pulse"
-                />
-              ))}
-            </div>
-
-            <div className="card mt-6">
-              <div className="h-6 w-40 bg-gray-200 rounded animate-pulse mb-4" />
-              <div className="space-y-3">
-                {[...Array(5)].map((_, i) => (
-                  <div
-                    key={i}
-                    className="h-10 bg-gray-200 rounded animate-pulse"
-                  />
-                ))}
-              </div>
-            </div>
-          </>
+        {isLoading ? (
+          <DashboardLoader/>
         ) : isError ? (
           <p className="mt-6 text-red-500 text-sm">
             Failed to load dashboard data.
@@ -187,6 +159,37 @@ const DashboardPage = () => {
         )}
       </div>
     </DashboardLayout>
+  );
+};
+
+export const DashboardLoader = () => {
+  return (
+    <>
+      {/* Stats Cards */}
+      <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-3 md:gap-6 mt-5">
+        {[...Array(4)].map((_, i) => (
+          <div
+            key={i}
+            className="flex items-center gap-3 p-3 bg-gray-100 rounded-lg animate-pulse"
+          >
+            <div className="w-3 h-3 bg-gray-300 rounded" />
+            <div className="flex flex-col gap-1">
+              <div className="h-4 w-24 bg-gray-300 rounded" />
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Charts */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 my-4 md:my-6">
+        {[...Array(2)].map((_, i) => (
+          <div
+            key={i}
+            className="card h-80! bg-gray-100 animate-pulse rounded-lg"
+          />
+        ))}
+      </div>
+    </>
   );
 };
 

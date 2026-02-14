@@ -1,6 +1,5 @@
 import type { Task } from "@/services/task.service";
 import moment from "moment";
-import React from "react";
 
 type TaskData = Pick<
   Task,

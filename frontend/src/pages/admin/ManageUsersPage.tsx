@@ -1,10 +1,67 @@
-import DashboardLayout from '@/components/partials/DashboardLayout'
-import React from 'react'
+import DashboardLayout from "@/components/partials/DashboardLayout";
+import UserCard, { UserCardSkeleton } from "@/components/ui/UserCard";
+import { useAuth } from "@/hooks/api/useAuth";
+import { toast } from "@/libraries/sweetalert2";
+import { reportService, userService } from "@/services";
+import type { UserWithTaskCounts } from "@/services/user.service";
+import { useQuery } from "@tanstack/react-query";
+import React from "react";
+import { LuFileSpreadsheet } from "react-icons/lu";
 
 const ManageUsersPage = () => {
-  return (
-    <DashboardLayout>ManageUsersPage</DashboardLayout>
-  )
-}
+  const { user } = useAuth();
+  const {
+    data: allUsers,
+    isLoading,
+    isError,
+  } = useQuery<UserWithTaskCounts[]>({
+    queryKey: ["auth", user?._id, "users"],
+    queryFn: async () => {
+      const { data } = await userService.fetchUsersReq();
+      return data;
+    },
+    enabled: !!user,
+    refetchOnMount: true, // aggresively prevent stale users data
+  });
 
-export default ManageUsersPage
+  const handleDownlodReport = async () => {
+    try {
+      await reportService.downloadUsersReport();
+      toast.success("Your download has started");
+    } catch (err: any) {
+      toast.error(err.message);
+    }
+  };
+
+  return (
+    <DashboardLayout>
+      <div className="mt-5 mb-10">
+        <div className="flex md:flex-row md:items-center justify-between">
+          <h2 className="text-xl md:text-xl font-medium">Team Members</h2>
+
+          <button
+            className="flex md:flex download-btn"
+            onClick={handleDownlodReport}
+          >
+            <LuFileSpreadsheet className="text-lg" />
+            Download Report
+          </button>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+          {isLoading ? (
+            [1, 2, 3].map((_, i) => <UserCardSkeleton key={i} />)
+          ) : isError ? (
+            <p className="mt-6 text-red-500 text-sm col-span-full">
+              Failed to load your team members.
+            </p>
+          ) : (
+            allUsers?.map((user) => <UserCard key={user._id} user={user} />)
+          )}
+        </div>
+      </div>
+    </DashboardLayout>
+  );
+};
+
+export default ManageUsersPage;

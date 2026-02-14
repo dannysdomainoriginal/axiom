@@ -7,12 +7,10 @@ const router = Router();
 
 router.use(protect);
 router.get("/", adminOnly, userController.getUsers);
+router.get("/images", adminOnly, userController.getUsersProfileImages);
 
-router.get(
-  "/:id",
-  adminOnly,
-  validObjectId(["id"]),
-  userController.getUserById,
-);
+router.use("/:id", adminOnly, validObjectId(["id"]));
+router.get("/:id", userController.getUserById);
+router.delete("/:id", userController.deleteUser);
 
 export default router;
