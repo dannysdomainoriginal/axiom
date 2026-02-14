@@ -9,6 +9,7 @@ interface AuthContext {
   loading: boolean;
   updateUser: (data: User) => void;
   clearUser: () => void;
+  isAdmin: boolean
 }
 
 export const useAuth = (): AuthContext => {
@@ -43,5 +44,6 @@ export const useAuth = (): AuthContext => {
     loading: isLoading,
     updateUser,
     clearUser,
+    isAdmin: !!(user && user.roles.includes("admin"))
   };
 };

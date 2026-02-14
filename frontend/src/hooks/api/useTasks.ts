@@ -56,7 +56,7 @@ export function useTasks(
   ApiResponse<Task>,
   ApiError,
   { taskId: string; data: StatusOrChecklist }
-  >;
+>;
 
 export function useTasks(
   option: "delete-task",
@@ -136,6 +136,11 @@ export function useTasks(option: TaskOption) {
                 ),
               }
             : old,
+      );
+
+      queryClient.setQueryData<Task>(
+        ["auth", user?._id, "tasks", { id: data._id }],
+        data,
       );
 
       toast.success(message!);

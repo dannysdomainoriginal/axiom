@@ -123,8 +123,8 @@ export const deleteTask = async (
 };
 
 export type StatusOrChecklist =
-  | { status: Task["status"]; todoChecklist: never }
-  | { status: never; todoChecklist: Task["todoChecklist"] };
+  | { status: Task["status"]; todoChecklist?: never }
+  | { status?: never; todoChecklist: Task["todoChecklist"] };
 
 type UpdateTaskStatus = { taskId: string; data: StatusOrChecklist };
 

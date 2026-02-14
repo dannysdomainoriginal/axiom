@@ -19,6 +19,7 @@ import MyTasksPage from "./pages/user/MyTasksPage";
 import TasksDetailsPage from "./pages/user/TasksDetailsPage";
 import AuthRoute from "./components/routes/AuthRoute";
 import UpdateTaskPage from "./pages/admin/UpdateTaskPage";
+import NotFoundPage from "./pages/NotFoundPage";
 
 const App = () => {
   const { user, loading } = useAuth();
@@ -49,19 +50,28 @@ const App = () => {
             <Route path="update-task/:id" element={<UpdateTaskPage />} />
             <Route path="users" element={<ManageUsersPage />} />
             <Route path="users/:id" element={<ManageUsersPage />} />
+
+            {/* Not Found */}
+            <Route index element={<NotFoundPage />} />
+            <Route path="*" element={<NotFoundPage />} />
           </Route>
 
-          {/* User Routes */}
-          <Route
-            path="/user"
-            element={<ProtectedRoute allowedRole={"member"} />}
-          >
-            <Route path="dashboard" element={<UserDashboard />} />
-            <Route path="tasks" element={<MyTasksPage />} />
-          </Route>
-          
-          <Route path="/tasks" element={<ProtectedRoute allowedRole={"member"} />}>
-            <Route path=":id" element={<TasksDetailsPage />} />
+          {/* Other Routes */}
+          <Route path="/" element={<ProtectedRoute allowedRole={"member"} />}>
+            {/* User Routes */}
+            <Route path="user">
+              <Route index element={<NotFoundPage />} />
+              <Route path="dashboard" element={<UserDashboard />} />
+              <Route path="tasks" element={<MyTasksPage />} />
+            </Route>
+
+            {/* Task Routes */}
+            <Route path="tasks">
+              <Route path=":id" element={<TasksDetailsPage />} />
+            </Route>
+
+            {/* Not Found */}
+            <Route path="*" element={<NotFoundPage />} />
           </Route>
         </Routes>
       </BrowserRouter>

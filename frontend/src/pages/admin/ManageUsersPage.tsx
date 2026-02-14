@@ -1,28 +1,12 @@
 import DashboardLayout from "@/components/partials/DashboardLayout";
 import UserCard, { UserCardSkeleton } from "@/components/ui/UserCard";
-import { useAuth } from "@/hooks/api/useAuth";
+import { useUsers } from "@/hooks/api/useUsers";
 import { toast } from "@/libraries/sweetalert2";
-import { reportService, userService } from "@/services";
-import type { UserWithTaskCounts } from "@/services/user.service";
-import { useQuery } from "@tanstack/react-query";
-import React from "react";
+import { reportService } from "@/services";
 import { LuFileSpreadsheet } from "react-icons/lu";
 
 const ManageUsersPage = () => {
-  const { user } = useAuth();
-  const {
-    data: allUsers,
-    isLoading,
-    isError,
-  } = useQuery<UserWithTaskCounts[]>({
-    queryKey: ["auth", user?._id, "users"],
-    queryFn: async () => {
-      const { data } = await userService.fetchUsersReq();
-      return data;
-    },
-    enabled: !!user,
-    refetchOnMount: true, // aggresively prevent stale users data
-  });
+  const { data: allUsers, isLoading, isError } = useUsers();
 
   const handleDownlodReport = async () => {
     try {

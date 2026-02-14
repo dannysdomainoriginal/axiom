@@ -67,7 +67,7 @@ const UpdateTaskPage = () => {
     try {
       const { message } = await mutateAsync({ taskId, data });
       toast.success(message!);
-      navigate("/admin/tasks");
+      navigate(`/tasks/${taskId}`);
     } catch (err: any) {
       toast.error(err.message);
     }

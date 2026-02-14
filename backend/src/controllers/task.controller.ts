@@ -54,7 +54,6 @@ export const getTasks: RequestHandler = async (req, res) => {
       },
     },
   ]);
-  console.log(summary);
 
   const summaryMap: Record<string, number> = summary.reduce((acc, cur) => {
     acc[cur._id] = cur.count;

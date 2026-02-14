@@ -45,7 +45,7 @@ const ManageTasksPage = () => {
       <div className="my-5">
         <div className="flex flex-col md:flex-row md:items-center justify-between">
           <div className="flex items-center justify-between gap-3">
-            <h2 className="text-xl md:text-xl font-medium">My Tasks</h2>
+            <h2 className="text-xl md:text-xl font-medium">Manage Tasks</h2>
 
             <button
               className="flex md:hidden download-btn"
@@ -87,7 +87,7 @@ const ManageTasksPage = () => {
             </p>
           ) : (
             allTasks.map((task, idx) => (
-              <Link key={idx} to={`/admin/update-task/${task._id}`}>
+              <Link key={idx} to={`/tasks/${task._id}`}>
                 <TaskCard task={task} />
               </Link>
             ))

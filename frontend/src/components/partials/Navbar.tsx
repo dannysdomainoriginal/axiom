@@ -12,19 +12,19 @@ const Navbar = () => {
         onClick={() => setOpenSideMenu(!openSideMenu)}
       >
         {openSideMenu ? (
-          <HiOutlineX className="text-2xl" />
+          <HiOutlineX className="text-2xl cursor-pointer" />
         ) : (
-          <HiOutlineMenu className="text-2xl" />
+          <HiOutlineMenu className="text-2xl cursor-pointer" />
         )}
       </button>
 
       <h2 className="text-lg font-medium text-black">Axiom Dashboard</h2>
 
-      {openSideMenu && (
-        <div className="fixed top-15.25 -ml-4 bg-white">
-          <SideMenu />
-        </div>
-      )}
+      <div
+        className={`fixed top-15.25 -ml-4 bg-white ${!openSideMenu ? "-translate-x-105 ease-in" : "ease-out"} transition-transform duration-500 ease-in`}
+      >
+        <SideMenu />
+      </div>
     </div>
   );
 };
