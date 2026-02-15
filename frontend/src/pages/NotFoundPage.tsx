@@ -1,5 +1,4 @@
 import DashboardLayout from '@/components/partials/DashboardLayout'
-import React from 'react'
 
 const NotFoundPage = () => {
   return (

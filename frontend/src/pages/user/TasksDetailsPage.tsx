@@ -8,7 +8,6 @@ import {
 import { useAuth } from "@/hooks/api/useAuth";
 import { useEditTask, useTask } from "@/hooks/api/useTask";
 import moment from "moment";
-import React from "react";
 import { Link, useParams } from "react-router-dom";
 
 const TasksDetailsPage = () => {
