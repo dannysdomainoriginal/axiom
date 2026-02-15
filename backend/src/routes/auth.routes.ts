@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { protect } from "@/middlewares/auth.middleware";
+import { adminOnly, protect } from "@/middlewares/auth.middleware";
 import { validate } from "@/middlewares/validate.middleware";
 import * as authController from "@/controllers/auth.controller";
 import {
@@ -14,6 +14,7 @@ router.post("/register", validate(registerSchema), authController.register);
 router.post("/login", validate(loginSchema), authController.login);
 router.post("/logout", protect, authController.logout);
 router.get("/profile", protect, authController.getProfile);
+router.get("/admin-invite", protect, adminOnly, authController.issueToken);
 
 router.patch(
   "/profile",

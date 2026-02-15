@@ -5,6 +5,7 @@ import httpError from "http-errors";
 import { extname } from "path";
 import { processImage } from "@/libraries/utils";
 import { uploadFile } from "@/libraries/cloudflare";
+import Token from "@/models/Token";
 
 const generateToken = (id: string, res: Response) => {
   const token = jwt.sign({ userId: id }, process.env.JWT_SECRET, {
@@ -26,7 +27,7 @@ const generateToken = (id: string, res: Response) => {
 /*                                  REGISTER                                  */
 /* -------------------------------------------------------------------------- */
 export const register: RequestHandler = async (req, res) => {
-  const { email, adminInviteToken } = req.body;
+  const { email, adminInviteToken: code } = req.body;
 
   const emailExists = await User.exists({ email });
   if (emailExists) {
@@ -35,7 +36,17 @@ export const register: RequestHandler = async (req, res) => {
 
   const image = req.files?.["profile-img"];
   const roles = ["member"];
-  adminInviteToken === process.env.ADMIN_INVITE_TOKEN && roles.push("admin");
+  
+  if (code) {
+    const invite = await Token.exists({ code })
+    
+    if (invite) {
+      roles.push("admin")
+      await Token.nullifyInvite(code)
+    } else {
+      throw httpError[400]("Your invite token is invalid or expired")
+    }
+  }
 
   delete req.body.adminInviteToken;
 
@@ -175,3 +186,13 @@ export const updateProfile: RequestHandler = async (req, res) => {
     message: "Your profile was updated successffully",
   });
 };
+
+export const issueToken: RequestHandler = async (req, res) => {
+  const { code } = await Token.createInvite()
+  
+  res.status(201).json({
+    success: true,
+    data: code,
+    message: "Token generated successfully"
+  })
+}

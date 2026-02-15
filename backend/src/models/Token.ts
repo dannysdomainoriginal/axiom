@@ -1,33 +1,52 @@
-import { model, Schema } from "mongoose";
+import { model, Schema, Model, Document, Types } from "mongoose";
+import { randomInt } from "crypto"
 
-const tokenSchema = new Schema({
-  user: {
-    type: Schema.Types.ObjectId,
-    ref: "User",
-    required: true,
+interface TokenI extends Document {
+  type: string;
+  code: string;
+  expires: Date;
+}
+
+interface TokenMethods {}
+
+interface TokenModel extends Model<TokenI, {}, TokenMethods> {
+  createInvite(): Promise<TokenI>;
+  nullifyInvite(code: string): Promise<void>;
+}
+
+const tokenSchema = new Schema<TokenI, TokenModel>(
+  {
+    type: {
+      type: String,
+      default: "admin-invite",
+    },
+
+    code: {
+      type: String,
+      required: true,
+      match: [/^\d{6}$/, "Token code must be exactly 6 digits"],
+    },
+
+    expires: {
+      type: Date,
+      default: Date.now,
+      expires: 24 * 60 * 60,
+    },
   },
+  {
+    timestamps: false,
+    statics: {
+      async createInvite() {
+        const code = randomInt(100000, 1000000).toString();
+        return this.create({ code })
+      },
 
-  verificationToken: {
-    type: String,
-    default: "",
+      async nullifyInvite(code) {
+        return this.deleteOne({ code });
+      },
+    },
   },
+);
 
-  passwordResetToken: {
-    type: String,
-    default: "",
-  },
-
-  createdAt: {
-    type: Date,
-    default: Date.now,
-  },
-
-  expiresAt: {
-    type: Date,
-    required: true,
-    expires: 0,
-  },
-});
-
-const Token = model("Token", tokenSchema);
+const Token = model<TokenI, TokenModel>("Token", tokenSchema);
 export default Token;
