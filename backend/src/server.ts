@@ -24,6 +24,7 @@ app.use(parser());
 app.use(morgan("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.set("trust proxy", 1);
 
 /* -------------------------------------------------------------------------- */
 /*                                 API ROUTES                                 */
