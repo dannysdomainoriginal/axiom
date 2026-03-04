@@ -1,13 +1,20 @@
 import type { Task } from "@/services/task.service";
 import type { UserWithTaskCounts } from "@/services/user.service";
+import { motion } from "framer-motion";
 
 interface Props {
   user: UserWithTaskCounts;
+  delta: number;
 }
 
-const UserCard = ({ user }: Props) => {
+const UserCard = ({ user, delta }: Props) => {
   return (
-    <div className="user-card p-2">
+    <motion.div
+      className="user-card p-2"
+      initial={{ opacity: 0, y: 20 }} // start slightly below
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4, ease: "easeOut", delay: delta * 0.2 }}
+    >
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
           <img
@@ -40,7 +47,7 @@ const UserCard = ({ user }: Props) => {
           status="Completed"
         />
       </div>
-    </div>
+    </motion.div>
   );
 };
 
@@ -56,21 +63,23 @@ const StatCard = ({ label, count, status }: StatCardProps) => {
   const getStatusTagColor = () => {
     switch (status) {
       case "In Progress":
-        return "text-cyan-500 bg-gray-50"
-      
+        return "text-cyan-500 bg-gray-50";
+
       case "Completed":
-        return "text-indigo-500 bg-gray-50"
-      
+        return "text-indigo-500 bg-gray-50";
+
       case "Pending":
-        return "text-violet-500 bg-gray-50"
+        return "text-violet-500 bg-gray-50";
     }
-  }
+  };
 
   return (
-    <div className={`flex-1 text-[10px] font-medium ${getStatusTagColor()} px-4 py-1.5 rounded`}>
+    <div
+      className={`flex-1 text-[10px] font-medium ${getStatusTagColor()} px-4 py-1.5 rounded`}
+    >
       <span className="text-[12px] font-semibold">{count}</span> {label}
     </div>
-  )
+  );
 };
 
 export const UserCardSkeleton = () => {

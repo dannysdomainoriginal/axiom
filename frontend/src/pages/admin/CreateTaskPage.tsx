@@ -9,7 +9,7 @@ import { toast } from "@/libraries/sweetalert2";
 import { taskSchema, type TaskSchema } from "@/schemas";
 import { priorityData } from "@/utils/data";
 import { zodResolver } from "@hookform/resolvers/zod";
-import React, { useState } from "react";
+import { motion } from "framer-motion";
 import { useForm, type SubmitHandler } from "react-hook-form";
 
 const CreateTaskPage = () => {
@@ -51,11 +51,14 @@ const CreateTaskPage = () => {
     <DashboardLayout>
       <div className="mt-5">
         <div className="grid grid-cols-1 md:grid-cols-4 mt-4">
-          <div className="form-card col-span-3 md:col-span-4 w-full">
+          <motion.div
+            className="form-card col-span-3 md:col-span-4 w-full"
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3, ease: "easeOut" }}
+          >
             <div className="flex items-center justify-between">
-              <h2 className="text-xl md:text-xl font-medium">
-                Create Task
-              </h2>
+              <h2 className="text-xl md:text-xl font-medium">Create Task</h2>
             </div>
 
             <div className="mt-4">
@@ -152,7 +155,7 @@ const CreateTaskPage = () => {
                 text="Create Task"
               />
             </div>
-          </div>
+          </motion.div>
         </div>
       </div>
     </DashboardLayout>

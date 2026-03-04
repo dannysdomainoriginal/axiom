@@ -40,7 +40,9 @@ const ManageUsersPage = () => {
               Failed to load your team members.
             </p>
           ) : (
-            allUsers?.map((user) => <UserCard key={user._id} user={user} />)
+            allUsers?.map((user, idx) => (
+              <UserCard key={user._id} user={user} delta={idx} />
+            ))
           )}
         </div>
       </div>

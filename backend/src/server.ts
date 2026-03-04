@@ -11,6 +11,9 @@ import { join } from "path";
 const app = express();
 const PORT = process.env.PORT || 8000;
 
+/* -------------------------------------------------------------------------- */
+/*                            APP-LEVEL MIDDLEWARES                           */
+/* -------------------------------------------------------------------------- */
 app.use(
   cors({
     origin: process.env.CLIENT_URL,
@@ -22,13 +25,33 @@ app.use(morgan("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+/* -------------------------------------------------------------------------- */
+/*                                 API ROUTES                                 */
+/* -------------------------------------------------------------------------- */
 app.use("/api", routes);
 
 if (process.env.NODE_ENV === "development") {
   app.use("/uploads", express.static(join(process.cwd(), "uploads")));
 }
 
-// Not found handler
+/* -------------------------------------------------------------------------- */
+/*                              FRONTEND ROUTING                              */
+/* -------------------------------------------------------------------------- */
+if (process.env.NODE_ENV === "production") {
+  const frontendDir = join(__dirname, "..", "..", "frontend", "dist");
+  app.use(express.static(frontendDir));
+
+  // send index.html
+  app.use((req, res, next) => {
+    return !req.path.includes("/api")
+      ? res.sendFile(join(frontendDir, "index.html"))
+      : next();
+  });
+}
+
+/* -------------------------------------------------------------------------- */
+/*                            GROUND LEVEL HANDLER                            */
+/* -------------------------------------------------------------------------- */
 app.use((req, res, next) => {
   res.status(404).json({
     success: false,
@@ -37,7 +60,6 @@ app.use((req, res, next) => {
   });
 });
 
-// Request error handler
 app.use((err: any, req: Request, res: Response, next: NextFunction) => {
   const status = err.status || 500;
 
@@ -55,8 +77,10 @@ app.use((err: any, req: Request, res: Response, next: NextFunction) => {
   });
 });
 
-// * ChatGPT advised method
-connectDB()
+/* -------------------------------------------------------------------------- */
+/*                                   SERVER                                   */
+/* -------------------------------------------------------------------------- */
+Promise.all([connectDB()])
   .then(() => {
     app.listen(PORT, () => {
       logger.success(`Server listening on port ${PORT}`);
@@ -67,3 +91,18 @@ connectDB()
     console.log(err.stack);
     process.exit(1);
   });
+
+/* -------------------------------------------------------------------------- */
+/*                                 SAFETY SAKE                                */
+/* -------------------------------------------------------------------------- */
+process.on("uncaughtException", async (err, origin) => {
+  logger.error("Uncaught exception detected: Initiating clean exit");
+  console.log(err.stack);
+  process.exit(1);
+});
+
+process.on("unhandledRejection", async (err: Error) => {
+  logger.error("Unhandled rejection detected: Initiating clean exit");
+  console.log(err.stack);
+  process.exit(1);
+});

@@ -10,6 +10,7 @@ import moment from "moment";
 import CustomPieChart from "@/components/ui/CustomPieChart";
 import CustomBarChart from "@/components/ui/CustomBarChart";
 import { useTasks } from "@/hooks/api/useTasks";
+import { motion } from "framer-motion";
 
 type StatusDistribution = { status: Task["status"]; count: number }[];
 type PriorityDistribution = { priority: Task["priority"]; count: number }[];
@@ -115,36 +116,51 @@ const UserDashboardPage = () => {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 my-4 md:my-6">
               {/* Pie Chart */}
-              <div>
+              <motion.div
+                initial={{ opacity: 0, scale: 0.5 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.85, ease: "easeOut" }}
+              >
                 <div className="card">
                   <div className="flex items-center justify-between">
                     <h5 className="font-medium">Task Distribution</h5>
                   </div>
-
                   <CustomPieChart data={pieChartData} />
                 </div>
-              </div>
+              </motion.div>
 
               {/* Bar Chart */}
-              <div>
+              <motion.div
+                initial={{ opacity: 0, scale: 0.5 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.85, ease: "easeOut" }}
+              >
                 <div className="card">
                   <div className="flex items-center justify-between">
                     <h5 className="font-medium">Priority Distribution</h5>
                   </div>
-
                   <CustomBarChart data={barChartData} />
                 </div>
-              </div>
+              </motion.div>
 
               {/* Recent Tasks */}
-              <div className="md:col-span-2">
+              <motion.div
+                className="md:col-span-2"
+                initial={{ opacity: 0, y: "30%" }}
+                whileInView={{ opacity: 1, y: "0%" }}
+                viewport={{
+                  once: true,
+                  margin: "-10px 0px -10px 0px", // triggers when 10px of the element is visible, only once
+                }}
+                transition={{ duration: 0.85, ease: "easeInOut" }}
+              >
                 <div className="card">
                   <div className="flex items-center justify-between">
                     <h5 className="text-lg">Recent Tasks</h5>
 
                     <button
                       className="card-btn"
-                      onClick={() => navigate("/user/tasks")}
+                      onClick={() => navigate("/admin/tasks")}
                     >
                       See All <LuArrowRight className="text-base" />
                     </button>
@@ -152,7 +168,7 @@ const UserDashboardPage = () => {
 
                   <TaskListTable tableData={dashboardData?.recentTasks || []} />
                 </div>
-              </div>
+              </motion.div>
             </div>
           </>
         )}

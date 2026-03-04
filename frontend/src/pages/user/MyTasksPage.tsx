@@ -88,7 +88,7 @@ const ManageTasksPage = () => {
           ) : (
             allTasks.map((task, idx) => (
               <Link key={idx} to={`/tasks/${task._id}`}>
-                <TaskCard task={task} />
+                <TaskCard task={task} delta={idx} />
               </Link>
             ))
           )}

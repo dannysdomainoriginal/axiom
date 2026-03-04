@@ -8,6 +8,7 @@ import {
 import { useAuth } from "@/hooks/api/useAuth";
 import { useEditTask, useTask } from "@/hooks/api/useTask";
 import moment from "moment";
+import { motion } from "framer-motion";
 import { Link, useParams } from "react-router-dom";
 
 const TasksDetailsPage = () => {
@@ -54,18 +55,26 @@ const TasksDetailsPage = () => {
           {isLoading ? (
             <div className="form-card h-70 animate-pulse col-span-full"></div>
           ) : (
-            <div className="form-card col-span-full">
+            <motion.div
+              className="form-card col-span-full"
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3, ease: "easeOut" }}
+            >
               <div className="flex items-center justify-between">
                 <h2 className="text-base md:text-xl font-medium">
                   {task ? task.title : "Task Details"}
                 </h2>
 
                 {task && (
-                  <div
+                  <motion.div
                     className={`text-[13px] font-medium ${getStatusTagColor()} px-4 py-0.5 rounded`}
+                    initial={{ opacity: 0, scale: 0 }}
+                    whileInView={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.4, ease: "easeOut", delay: 0.5 }}
                   >
                     {task.status}
-                  </div>
+                  </motion.div>
                 )}
               </div>
 
@@ -163,7 +172,7 @@ const TasksDetailsPage = () => {
                   </>
                 )
               )}
-            </div>
+            </motion.div>
           )}
         </div>
       </div>

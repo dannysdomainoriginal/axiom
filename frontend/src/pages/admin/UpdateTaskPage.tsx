@@ -15,6 +15,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import React, { useEffect, useState } from "react";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { LuTrash2 } from "react-icons/lu";
+import { motion } from "framer-motion";
 import { useNavigate, useParams } from "react-router-dom";
 
 const UpdateTaskPage = () => {
@@ -100,7 +101,12 @@ const UpdateTaskPage = () => {
     <DashboardLayout>
       <div className="mt-5">
         <div className="grid grid-cols-1 md:grid-cols-4 mt-4">
-          <div className="form-card col-span-3 md:col-span-4 w-full">
+          <motion.div
+            className="form-card col-span-3 md:col-span-4 w-full"
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3, ease: "easeOut" }}
+          >
             <div className="flex items-center justify-between">
               <h2 className="text-xl md:text-xl font-medium">
                 {taskId ? "Update Task" : "Create Task"}
@@ -211,7 +217,7 @@ const UpdateTaskPage = () => {
                 text="Update Task"
               />
             </div>
-          </div>
+          </motion.div>
         </div>
       </div>
 

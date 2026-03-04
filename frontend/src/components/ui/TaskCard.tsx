@@ -1,11 +1,13 @@
 import type { Task } from "@/services/task.service";
 import AvatarGroup from "./AvatarGroup";
 import { LuPaperclip } from "react-icons/lu";
+import { motion } from "framer-motion";
 import React from "react";
 import moment from "moment";
 
 interface Props {
   task: Task;
+  delta: number;
 }
 
 export const TaskCardSkeleton = () => {
@@ -63,7 +65,7 @@ export const TaskCardSkeleton = () => {
   );
 };
 
-const TaskCard = ({ task }: Props) => {
+const TaskCard = ({ task, delta }: Props) => {
   const getStatusTagColor = () => {
     switch (task.status) {
       case "In Progress":
@@ -109,7 +111,12 @@ const TaskCard = ({ task }: Props) => {
   };
 
   return (
-    <div className="bg-white rounded-xl py-4 shadow-md shadow-gray-100 h-full border border-gray-200/50 cursor-pointer">
+    <motion.div
+      className="bg-white rounded-xl py-4 shadow-md shadow-gray-100 h-full border border-gray-200/50 cursor-pointer"
+      initial={{ opacity: 0, y: 20 }} // start slightly below
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4, ease: "easeOut", delay: delta * 0.2 }}
+    >
       <div className="flex items-end gap-3 px-4">
         <div
           className={`text-[11px] font-medium ${getStatusTagColor()} px-4 py-0.5 rounded`}
@@ -182,7 +189,7 @@ const TaskCard = ({ task }: Props) => {
           )}
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 };
 
