@@ -11,6 +11,7 @@ import { toast } from "@/libraries/sweetalert2";
 import { authService } from "@/services";
 import { buildFormDataStrict } from "@/utils/formParser";
 import { useAuth } from "@/hooks/api/useAuth";
+import axios from "axios";
 
 const SignupPage = () => {
   const {
@@ -36,6 +37,13 @@ const SignupPage = () => {
     console.log(formData.get("profile-img"));
 
     try {
+      // Test for disposable emails
+      const str = `https://open.kickbox.com/v1/disposable/${data.email}`;
+      const res = await axios.get(str)
+      if (res.data.disposable) {
+        throw new Error("We only accept trusted emails")
+      }
+
       const { data: user, message } = await authService.signupReq(formData);
 
       toast.success(message);
