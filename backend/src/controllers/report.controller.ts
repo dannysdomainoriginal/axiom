@@ -9,7 +9,7 @@ import { RequestHandler } from "express";
 /* -------------------------------------------------------------------------- */
 export const exportTasksReport: RequestHandler = async (req, res) => {
   try {
-    const tasks = await Task.find()
+    const tasks = await Task.find({ teamId: req.user.teamId })
       .select("_id title description priority status dueDate assignedTo")
       .populate("assignedTo", "name email")
       .lean({ versionKey: false });
@@ -86,8 +86,13 @@ export const exportTasksReport: RequestHandler = async (req, res) => {
 export const exportUsersReport: RequestHandler = async (req, res) => {
   try {
     const [users, userTasks] = await Promise.all([
-      User.find().select("name email _id").lean({ versionKey: false }),
-      Task.find({ assignedTo: { $exists: true, $not: { $size: 0 } } })
+      User.find({ teamId: req.user.teamId })
+        .select("name email _id")
+        .lean({ versionKey: false }),
+      Task.find({
+        assignedTo: { $exists: true, $not: { $size: 0 } },
+        teamId: req.user.teamId,
+      })
         .select("status assignedTo")
         .lean({ versionKey: false }),
     ]);
@@ -156,7 +161,7 @@ export const exportUsersReport: RequestHandler = async (req, res) => {
       "Content-Type",
       "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
     );
-    
+
     res.setHeader(
       "Content-Disposition",
       'attachment; filename="Axiom_Users_Report.xlsx"',

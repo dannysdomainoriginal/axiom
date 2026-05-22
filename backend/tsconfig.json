@@ -19,10 +19,8 @@
     "sourceMap": false,
     "noEmitOnError": true,
     "removeComments": true,
-
-    // Aliases
-    "baseUrl": ".",
-    "paths": { "@/*": ["src/*"] }
+    
+    "paths": { "@/*": ["./src/*"] }
   },
   "include": ["src", "types"],
   "exclude": ["node_modules", "dist"]

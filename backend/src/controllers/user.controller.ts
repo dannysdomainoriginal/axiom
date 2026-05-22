@@ -8,7 +8,10 @@ import httpError from "http-errors";
 /*                                  GET USERS                                 */
 /* -------------------------------------------------------------------------- */
 export const getUsers: RequestHandler = async (req, res) => {
-  const users = await User.find({ roles: { $nin: ["admin"] } })
+  const users = await User.find({
+    roles: { $nin: ["admin"] },
+    teamId: req.user.teamId,
+  })
     .select("-password")
     .lean({ versionKey: false });
 
@@ -16,14 +19,17 @@ export const getUsers: RequestHandler = async (req, res) => {
     users.map(async (user) => {
       const pendingTasks = await Task.countDocuments({
         assignedTo: user._id,
+        teamId: req.user.teamId,
         status: "Pending",
       });
       const inProgressTasks = await Task.countDocuments({
         assignedTo: user._id,
+        teamId: req.user.teamId,
         status: "In Progress",
       });
       const completedTasks = await Task.countDocuments({
         assignedTo: user._id,
+        teamId: req.user.teamId,
         status: "Completed",
       });
 
@@ -46,7 +52,10 @@ export const getUsers: RequestHandler = async (req, res) => {
 /*                          GET USERS PROFILE IMAGES                          */
 /* -------------------------------------------------------------------------- */
 export const getUsersProfileImages: RequestHandler = async (req, res) => {
-  const users = await User.find({ roles: { $nin: ["admin"] } })
+  const users = await User.find({
+    roles: { $nin: ["admin"] },
+    teamId: req.user.teamId,
+  })
     .select("name email profileImageUrl")
     .lean({ versionKey: false });
 
@@ -60,7 +69,11 @@ export const getUsersProfileImages: RequestHandler = async (req, res) => {
 /*                               GET USER BY ID                               */
 /* -------------------------------------------------------------------------- */
 export const getUserById: RequestHandler = async (req, res) => {
-  const user = await User.findById(req.params.id).select("-password");
+  const user = await User.findOne({
+    _id: req.params.id,
+    teamId: req.user.teamId,
+  }).select("-password");
+  
   if (!user) {
     throw httpError[404]("User was not found");
   }
@@ -75,7 +88,11 @@ export const getUserById: RequestHandler = async (req, res) => {
 /*                                 DELETE USER                                */
 /* -------------------------------------------------------------------------- */
 export const deleteUser: RequestHandler = async (req, res) => {
-  const user = await User.findById(req.params.id).select("-password");
+  const user = await User.findOne({
+    _id: req.params.id,
+    teamId: req.user.teamId,
+  }).select("-password");
+
   if (!user) {
     throw httpError[404]("User was not found");
   }

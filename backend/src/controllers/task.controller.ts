@@ -10,22 +10,24 @@ export const getTasks: RequestHandler = async (req, res) => {
   const allowedStatuses = ["Pending", "In Progress", "Completed"];
 
   if (status && !allowedStatuses.includes(status)) {
-    return res.status(400).json({
-      success: false,
-      message: `Invalid status: ${status}\nAllowed statuses are ${allowedStatuses.join(", ")}`,
-      status: 400,
-    });
+    throw httpError[400](
+      `Invalid status: ${status}\nAllowed statuses are ${allowedStatuses.join(", ")}`,
+    );
   }
 
   const filter = status ? { status } : {};
   const isAdmin = req.user.roles.includes("admin");
 
   const baseTasks = isAdmin
-    ? await Task.find(filter)
+    ? await Task.find({ ...filter, teamId: req.user.teamId })
         .sort({ createdAt: -1 })
         .populate("assignedTo", "name email profileImageUrl")
         .lean({ versionKey: false })
-    : await Task.find({ ...filter, assignedTo: req.user._id })
+    : await Task.find({
+        ...filter,
+        assignedTo: req.user._id,
+        teamId: req.user.teamId,
+      })
         .sort({ createdAt: -1 })
         .populate("assignedTo", "name email profileImageUrl")
         .lean({ versionKey: false });
@@ -79,7 +81,10 @@ export const getTasks: RequestHandler = async (req, res) => {
 /*                               GET TASK BY ID                               */
 /* -------------------------------------------------------------------------- */
 export const getTaskById: RequestHandler = async (req, res) => {
-  const task = await Task.findById(req.params.taskId)
+  const task = await Task.findOne({
+    _id: req.params.taskId,
+    teamId: req.user.teamId,
+  })
     .populate("assignedTo", "name email profileImageUrl")
     .lean({ versionKey: false });
 
@@ -100,6 +105,7 @@ export const createTask: RequestHandler = async (req, res) => {
   const task = await Task.create({
     ...req.body,
     createdBy: req.user._id,
+    teamId: req.user.teamId,
   });
 
   res.status(201).json({
@@ -113,10 +119,10 @@ export const createTask: RequestHandler = async (req, res) => {
 /*                             UPDATE TASK DETAILS                            */
 /* -------------------------------------------------------------------------- */
 export const updateTask: RequestHandler = async (req, res) => {
-  const task = await Task.findById(req.params.taskId).populate(
-    "assignedTo",
-    "name email profileImageUrl",
-  );
+  const task = await Task.findOne({
+    _id: req.params.taskId,
+    teamId: req.user.teamId,
+  }).populate("assignedTo", "name email profileImageUrl");
 
   if (!task) {
     throw httpError[404]("Task was not found");
@@ -150,10 +156,10 @@ export const updateTask: RequestHandler = async (req, res) => {
 /*                                 DELETE TASK                                */
 /* -------------------------------------------------------------------------- */
 export const deleteTask: RequestHandler = async (req, res) => {
-  const task = await Task.findById(req.params.taskId).populate(
-    "assignedTo",
-    "name email profileImageUrl",
-  );
+  const task = await Task.findOne({
+    _id: req.params.taskId,
+    teamId: req.user.teamId,
+  });
 
   if (!task) {
     throw httpError[404]("Task was not found");
@@ -181,6 +187,7 @@ export const updateTaskStatus: RequestHandler = async (req, res) => {
   const task = await Task.findOneAndUpdate(
     {
       _id: taskId,
+      teamId: req.user.teamId,
       ...(isAdmin ? {} : { assignedTo: req.user._id }),
     },
     [
@@ -290,24 +297,32 @@ export const getDashboardData: RequestHandler = async (req, res) => {
     Task.aggregate([
       {
         $facet: {
-          statusCounts: [{ $group: { _id: "$status", count: { $sum: 1 } } }],
+          statusCounts: [
+            { $match: { teamId: req.user.teamId } },
+            { $group: { _id: "$status", count: { $sum: 1 } } },
+          ],
           priorityCounts: [
+            { $match: { teamId: req.user.teamId } },
             { $group: { _id: "$priority", count: { $sum: 1 } } },
           ],
           overdueCount: [
             {
               $match: {
+                teamId: req.user.teamId,
                 status: { $ne: "Completed" },
                 dueDate: { $lt: now },
               },
             },
             { $count: "count" },
           ],
-          totalCount: [{ $count: "count" }],
+          totalCount: [
+            { $match: { teamId: req.user.teamId } },
+            { $count: "count" },
+          ],
         },
       },
     ]),
-    Task.find()
+    Task.find({ teamId: req.user.teamId })
       .sort({ createdAt: -1 })
       .limit(10)
       .select("title status priority dueDate createdAt"),
@@ -359,27 +374,35 @@ export const getUserDashboardData: RequestHandler = async (req, res) => {
 
   const [analytics, recentTasks] = await Promise.all([
     Task.aggregate([
-      { $match: { assignedTo } }, // Filter for user once at the start
+      { $match: { assignedTo, teamId: req.user.teamId } }, // Filter for user once at the start
       {
         $facet: {
-          statusCounts: [{ $group: { _id: "$status", count: { $sum: 1 } } }],
+          statusCounts: [
+            { $match: { teamId: req.user.teamId } },
+            { $group: { _id: "$status", count: { $sum: 1 } } },
+          ],
           priorityCounts: [
+            { $match: { teamId: req.user.teamId } },
             { $group: { _id: "$priority", count: { $sum: 1 } } },
           ],
           overdueCount: [
             {
               $match: {
+                teamId: req.user.teamId,
                 status: { $ne: "Completed" },
                 dueDate: { $lt: now },
               },
             },
             { $count: "count" },
           ],
-          totalCount: [{ $count: "count" }],
+          totalCount: [
+            { $match: { teamId: req.user.teamId } },
+            { $count: "count" },
+          ],
         },
       },
     ]),
-    Task.find({ assignedTo })
+    Task.find({ assignedTo, teamId: req.user.teamId })
       .sort({ createdAt: -1 })
       .limit(10)
       .select("title status priority dueDate createdAt"),

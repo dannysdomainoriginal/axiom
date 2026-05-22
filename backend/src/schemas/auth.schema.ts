@@ -20,7 +20,7 @@ export const registerSchema = z.object({
     .min(8, "Password must be at least 8 characters")
     .max(100, "Password has exceeded max length"),
 
-  adminInviteToken: z
+  invitationCode: z
     .string()
     .optional()
     .refine((v) => !v || /^\d{6}$/.test(v), {

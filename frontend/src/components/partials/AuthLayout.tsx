@@ -27,7 +27,7 @@ const AuthLayout = ({ children, side }: Props) => {
           isLeft ? "order-1" : "order-2"
         }`}
       >
-        <h2 className="text-lg font-medium text-black">Task Manager</h2>
+        <h2 className="text-lg font-medium text-black">Axiom Task Manager For Teams</h2>
         {children}
       </motion.div>
 

@@ -39,9 +39,9 @@ const SignupPage = () => {
     try {
       // Test for disposable emails
       const str = `https://open.kickbox.com/v1/disposable/${data.email}`;
-      const res = await axios.get(str)
+      const res = await axios.get(str);
       if (res.data.disposable) {
-        throw new Error("We only accept trusted emails")
+        throw new Error("We only accept trusted emails");
       }
 
       const { data: user, message } = await authService.signupReq(formData);
@@ -87,11 +87,11 @@ const SignupPage = () => {
               error={errors.password}
             />
             <Input
-              {...register("adminInviteToken")}
+              {...register("invitationCode")}
               type="text"
               label="Admin Invite Token"
               placeholder="Invitation Code"
-              error={errors.adminInviteToken}
+              error={errors.invitationCode}
             />
           </div>
 

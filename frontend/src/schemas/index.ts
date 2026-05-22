@@ -44,7 +44,7 @@ export const signupSchema = z.object({
     .min(1, "Please enter your password")
     .min(8, "Password must be at least 8 characters"),
 
-  adminInviteToken: z
+  invitationCode: z
     .string()
     .refine((v) => !v || /^\d{6}$/.test(v), {
       message: "Invite token must be exactly 6 digits",
@@ -83,9 +83,7 @@ export const signupSchema = z.object({
 });
 
 export const taskSchema = z.object({
-  title: z
-    .string()
-    .min(1, { message: "Please provide a task title" }),
+  title: z.string().min(1, { message: "Please provide a task title" }),
 
   description: z.string().min(5, {
     message: "Please provide a task description",

@@ -6,9 +6,9 @@
   "author": "Charles Daniel",
   "main": "src/server.ts",
   "scripts": {
-    "build": "tsc && tsc-alias && node scripts/compile.js",
-    "start": "node dist/server.js",
-    "dev": "tsx watch src/server.ts",
+    "build": "tsc && tsc-alias",
+    "start": "node -r dotenv/config dist/server.js",
+    "dev": "tsx watch src/server.ts --env-file=.env",
     "format": "prettier --write ."
   },
   "dependencies": {

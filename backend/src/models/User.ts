@@ -1,5 +1,6 @@
-import { model, Schema, Document, Model } from "mongoose";
+import { model, Schema, Document, Model, Types } from "mongoose";
 import bcrypt from "bcrypt";
+import Team from "./Team";
 
 export interface UserI extends Document {
   name: string;
@@ -7,6 +8,7 @@ export interface UserI extends Document {
   password: string;
   profileImageUrl: string;
   roles: Roles[];
+  teamId: Types.ObjectId;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -15,9 +17,7 @@ interface UserMethods {
   comparePassword: (password: string) => Promise<boolean>;
 }
 
-interface UserModel extends Model<UserI, {}, UserMethods> {
-  findByEmail: (email: string) => Promise<UserI | null>;
-}
+interface UserModel extends Model<UserI, {}, UserMethods> {}
 
 const userSchema = new Schema<UserI, UserModel, UserMethods>(
   {
@@ -44,6 +44,12 @@ const userSchema = new Schema<UserI, UserModel, UserMethods>(
       default: "/images/default.jpg",
     },
 
+    teamId: {
+      type: Schema.Types.ObjectId,
+      ref: "Team",
+      index: true,
+    },
+
     roles: {
       type: [String],
       enum: ["member", "admin", "creator"],
@@ -57,11 +63,6 @@ const userSchema = new Schema<UserI, UserModel, UserMethods>(
         return bcrypt.compare(password, this.password);
       },
     },
-    statics: {
-      async findByEmail(email: string) {
-        return this.findOne({ email });
-      },
-    },
   },
 );
 
@@ -72,6 +73,13 @@ userSchema.pre("save", async function () {
 
   if (this.isModified("profileImageUrl")) {
     this.profileImageUrl = this.profileImageUrl || "/images/default.jpg";
+  }
+
+  if (this.isNew && !this.teamId) {
+    const newTeam = await Team.create({})
+
+    this.teamId = newTeam._id
+    this.roles = this.roles.concat(["admin", "creator"])
   }
 });
 

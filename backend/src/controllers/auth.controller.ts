@@ -27,35 +27,37 @@ const generateToken = (id: string, res: Response) => {
 /*                                  REGISTER                                  */
 /* -------------------------------------------------------------------------- */
 export const register: RequestHandler = async (req, res) => {
-  const { email, adminInviteToken: code } = req.body;
+  const { email, invitationCode: code } = req.body;
 
   const emailExists = await User.exists({ email });
   if (emailExists) {
     throw httpError[400]("This email is already registered");
   }
 
-  const image = req.files?.["profile-img"];
-  const roles = ["member"];
-  
+  const userDetails = {
+    ...req.body,
+    roles: ["member"],
+  };
+
   if (code) {
-    const invite = await Token.exists({ code })
-    
-    if (invite) {
-      roles.push("admin")
-      await Token.nullifyInvite(code)
-    } else {
-      throw httpError[400]("Your invite token is invalid or expired")
+    const invite = await Token.findOne({ code }).lean();
+
+    if (!invite) {
+      throw httpError[400]("Your invite token is invalid or expired");
     }
+    
+    if (invite.inviteAs === "admin") {
+      userDetails.roles.push("admin")
+    }
+
+    userDetails.teamId = invite.teamId
   }
 
-  delete req.body.adminInviteToken;
+  const user = await User.create(userDetails);
 
-  const user = await User.create({
-    ...req.body,
-    roles: roles as Roles[],
-  });
-
+  const image = req.files?.["profile-img"];
   const result = !!image ? await processImage(image.path) : null;
+  
   if (result) {
     const ext = result.success ? ".webp" : extname(image.name);
 
@@ -188,11 +190,11 @@ export const updateProfile: RequestHandler = async (req, res) => {
 };
 
 export const issueToken: RequestHandler = async (req, res) => {
-  const { code } = await Token.createInvite()
-  
+  const { code } = await Token.createInvite();
+
   res.status(201).json({
     success: true,
     data: code,
-    message: "Token generated successfully"
-  })
-}
+    message: "Token generated successfully",
+  });
+};

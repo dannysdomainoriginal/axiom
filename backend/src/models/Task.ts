@@ -9,6 +9,7 @@ interface TaskI extends Document {
   description: string;
   priority: "Low" | "Medium" | "High";
   status: "Pending" | "In Progress" | "Completed";
+  teamId: Types.ObjectId;
   dueDate: Date;
   assignedTo: Types.ObjectId[];
   createdBy: Types.ObjectId;
@@ -28,7 +29,7 @@ interface Todo {
 
 interface TaskMethods {}
 
-interface TaskModel extends Model<TaskI, {}, TaskMethods> { }
+interface TaskModel extends Model<TaskI, {}, TaskMethods> {}
 
 /* -------------------------------------------------------------------------- */
 /*                                   SCHEMAS                                  */
@@ -66,6 +67,13 @@ const taskSchema = new Schema<TaskI, TaskModel, TaskMethods>(
       type: String,
       enum: ["Pending", "In Progress", "Completed"],
       default: "Pending",
+    },
+
+    teamId: {
+      type: Schema.Types.ObjectId,
+      ref: "Team",
+      required: true,
+      index: true,
     },
 
     dueDate: {
