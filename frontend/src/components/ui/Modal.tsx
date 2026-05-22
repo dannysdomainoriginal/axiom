@@ -12,7 +12,7 @@ const Modal = ({ children, isOpen, onClose, title }: Props) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed top-0 right-0 left-0 z-50 flex justify-center items-center w-full h-full max-h-full overflow-y-auto overflow-x-hidden bg-black/20 bg-opactiy-0">
+    <div className="fixed top-0 right-0 left-0 z-50 flex justify-center items-center w-full h-full max-h-full overflow-y-auto overflow-x-hidden bg-black/20" onClick={onClose}>
       <div className="relative p-4 w-full max-w-2xl max-h-full">
         {/* Modal Content */}
         <motion.div
@@ -20,6 +20,7 @@ const Modal = ({ children, isOpen, onClose, title }: Props) => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, ease: "easeInOut" }}
           className="relative bg-white rounded-lg shadow-sm dark:bg-gray-700"
+          onClick={(e) => e.stopPropagation()}
         >
           {/* Modal Header */}
           <div className="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600 border-gray-200">

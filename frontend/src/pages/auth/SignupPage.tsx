@@ -39,8 +39,12 @@ const SignupPage = () => {
     try {
       // Test for disposable emails
       const str = `https://open.kickbox.com/v1/disposable/${data.email}`;
-      const res = await axios.get(str);
-      if (res.data.disposable) {
+      const res = await axios.get(str).catch(() => {
+        // skip on error
+        console.log("Unable to verify email")
+      });
+
+      if (res?.data.disposable) {
         throw new Error("We only accept trusted emails");
       }
 

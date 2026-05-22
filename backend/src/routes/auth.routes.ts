@@ -14,7 +14,6 @@ router.post("/register", validate(registerSchema), authController.register);
 router.post("/login", validate(loginSchema), authController.login);
 router.post("/logout", protect, authController.logout);
 router.get("/profile", protect, authController.getProfile);
-router.get("/admin-invite", protect, adminOnly, authController.issueToken);
 
 router.patch(
   "/profile",

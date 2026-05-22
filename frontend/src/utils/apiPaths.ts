@@ -37,7 +37,7 @@ export const apiPaths = {
     exportUsers: "/reports/users/export",
   },
 
-  image: {
-    uploadImage: "/auth/upload-image",
-  },
+  invite: {
+    getInviteCode: "/invite/new"
+  }
 };

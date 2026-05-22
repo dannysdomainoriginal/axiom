@@ -9,7 +9,6 @@ import httpError from "http-errors";
 /* -------------------------------------------------------------------------- */
 export const getUsers: RequestHandler = async (req, res) => {
   const users = await User.find({
-    roles: { $nin: ["admin"] },
     teamId: req.user.teamId,
   })
     .select("-password")
@@ -53,7 +52,6 @@ export const getUsers: RequestHandler = async (req, res) => {
 /* -------------------------------------------------------------------------- */
 export const getUsersProfileImages: RequestHandler = async (req, res) => {
   const users = await User.find({
-    roles: { $nin: ["admin"] },
     teamId: req.user.teamId,
   })
     .select("name email profileImageUrl")

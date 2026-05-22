@@ -1,7 +1,7 @@
 import { model, Schema, Model, Document, Types } from "mongoose";
 import { randomInt } from "crypto";
 
-interface TokenI extends Document {
+interface InviteI extends Document {
   type: string;
   code: string;
   teamId: Types.ObjectId;
@@ -9,14 +9,17 @@ interface TokenI extends Document {
   expires: Date;
 }
 
-interface TokenMethods {}
+interface InviteMethods {}
 
-interface TokenModel extends Model<TokenI, {}, TokenMethods> {
-  createInvite(): Promise<TokenI>;
-  nullifyInvite(code: string): Promise<void>;
+interface InviteModel extends Model<InviteI, {}, InviteMethods> {
+  createInvite(options: {
+    teamId: Types.ObjectId;
+    inviteAs: string;
+  }): Promise<InviteI>;
+  nullifyInvite(code: string, teamId: Types.ObjectId): Promise<void>;
 }
 
-const tokenSchema = new Schema<TokenI, TokenModel>(
+const inviteSchema = new Schema<InviteI, InviteModel, InviteMethods>(
   {
     type: {
       type: String,
@@ -26,7 +29,7 @@ const tokenSchema = new Schema<TokenI, TokenModel>(
     code: {
       type: String,
       required: true,
-      match: [/^\d{6}$/, "Token code must be exactly 6 digits"],
+      match: [/^\d{6}$/, "Invite code must be exactly 6 digits"],
     },
 
     teamId: {
@@ -56,20 +59,23 @@ const tokenSchema = new Schema<TokenI, TokenModel>(
 /* -------------------------------------------------------------------------- */
 /*                                CREATE INVITE                               */
 /* -------------------------------------------------------------------------- */
-tokenSchema.statics.createInvite = async function (teamId: Types.ObjectId) {
+inviteSchema.statics.createInvite = async function (options: {
+  teamId: Types.ObjectId;
+  inviteAs: string;
+}) {
   const code = randomInt(100000, 1000000).toString();
-  return this.create({ code, teamId });
+  return this.create({ code, ...options });
 };
 
 /* -------------------------------------------------------------------------- */
 /*                               NULLIFY INVITE                               */
 /* -------------------------------------------------------------------------- */
-tokenSchema.statics.nullifyInvite = async function (
+inviteSchema.statics.nullifyInvite = async function (
   code: string,
   teamId: Types.ObjectId,
 ) {
   return this.deleteOne({ code, teamId });
 };
 
-const Token = model<TokenI, TokenModel>("Token", tokenSchema);
-export default Token;
+const Invite = model<InviteI, InviteModel>("Invite", inviteSchema);
+export default Invite;

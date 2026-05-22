@@ -76,6 +76,7 @@ export function useTasks(option: TaskOption) {
         return data;
       },
       enabled: !!user,
+      refetchInterval: 60
     });
   }
 

@@ -44,11 +44,11 @@ const ManageTasksPage = () => {
     <DashboardLayout>
       <div className="my-5">
         <div className="flex flex-col md:flex-row md:items-center justify-between">
-          <div className="flex items-center justify-between gap-3">
+          <div className="flex items-center justify-between gap-3 w-full">
             <h2 className="text-xl md:text-xl font-medium">Manage Tasks</h2>
 
             <button
-              className="flex md:hidden download-btn"
+              className="sm:flex hidden download-btn"
               onClick={handleDownlodReport}
             >
               <LuFileSpreadsheet className="text-lg" />

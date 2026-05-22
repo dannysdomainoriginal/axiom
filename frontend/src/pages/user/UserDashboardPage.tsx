@@ -160,7 +160,7 @@ const UserDashboardPage = () => {
 
                     <button
                       className="card-btn"
-                      onClick={() => navigate("/admin/tasks")}
+                      onClick={() => navigate("/user/tasks")}
                     >
                       See All <LuArrowRight className="text-base" />
                     </button>

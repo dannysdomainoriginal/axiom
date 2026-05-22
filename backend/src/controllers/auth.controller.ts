@@ -5,7 +5,7 @@ import httpError from "http-errors";
 import { extname } from "path";
 import { processImage } from "@/libraries/utils";
 import { uploadFile } from "@/libraries/cloudflare";
-import Token from "@/models/Token";
+import Invite from "@/models/Invite";
 
 const generateToken = (id: string, res: Response) => {
   const token = jwt.sign({ userId: id }, process.env.JWT_SECRET, {
@@ -40,24 +40,24 @@ export const register: RequestHandler = async (req, res) => {
   };
 
   if (code) {
-    const invite = await Token.findOne({ code }).lean();
+    const invite = await Invite.findOne({ code }).lean();
 
     if (!invite) {
-      throw httpError[400]("Your invite token is invalid or expired");
-    }
-    
-    if (invite.inviteAs === "admin") {
-      userDetails.roles.push("admin")
+      throw httpError[400]("Your invite code is invalid or expired");
     }
 
-    userDetails.teamId = invite.teamId
+    if (invite.inviteAs === "admin") {
+      userDetails.roles.push("admin");
+    }
+
+    userDetails.teamId = invite.teamId;
   }
 
   const user = await User.create(userDetails);
 
   const image = req.files?.["profile-img"];
   const result = !!image ? await processImage(image.path) : null;
-  
+
   if (result) {
     const ext = result.success ? ".webp" : extname(image.name);
 
@@ -186,15 +186,5 @@ export const updateProfile: RequestHandler = async (req, res) => {
       profileImageUrl: user.profileImageUrl,
     },
     message: "Your profile was updated successffully",
-  });
-};
-
-export const issueToken: RequestHandler = async (req, res) => {
-  const { code } = await Token.createInvite();
-
-  res.status(201).json({
-    success: true,
-    data: code,
-    message: "Token generated successfully",
   });
 };

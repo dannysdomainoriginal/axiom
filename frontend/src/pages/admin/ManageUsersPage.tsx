@@ -24,7 +24,7 @@ const ManageUsersPage = () => {
           <h2 className="text-xl md:text-xl font-medium">Team Members</h2>
 
           <button
-            className="flex md:flex download-btn"
+            className="hidden sm:flex download-btn"
             onClick={handleDownlodReport}
           >
             <LuFileSpreadsheet className="text-lg" />
