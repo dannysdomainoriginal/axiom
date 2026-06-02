@@ -93,8 +93,8 @@ const SignupPage = () => {
             <Input
               {...register("invitationCode")}
               type="text"
-              label="Admin Invite Token"
-              placeholder="Invitation Code"
+              label="Invitation Code (Optional)"
+              placeholder="Enter an invitation code to join a team"
               error={errors.invitationCode}
             />
           </div>
